@@ -11,6 +11,7 @@
         />
         <link rel="stylesheet" href="css/main.css" />
         <link rel="stylesheet" href="css/heroui-bridge.css" />
+        <link rel="stylesheet" href="css/countdown-timer.css" />
     </head>
 
     <body class="hero-body" data-theme="heroui">
@@ -736,6 +737,7 @@
 
         <script src="js/runtime/lazyLoader.js" defer></script>
         <script src="js/presentation/app-actions.js" defer></script>
+        <script src="js/features/countdownTimer.js" defer></script>
 
         <!-- 基础环境与日志 -->
         <script src="js/utils/environmentDetector.js"></script>
@@ -760,7 +762,6 @@
 
         <!-- 工具库与基础视图 -->
         <script src="js/utils/dom.js"></script>
-        <script src="js/services/overviewStats.js"></script>
         <script src="js/views/overviewView.js"></script>
         <script src="js/presentation/navigation-controller.js"></script>
 
@@ -771,13 +772,8 @@
         <script src="js/runtime/boot-fallbacks.js"></script>
         <script src="js/patches/runtime-fixes.js"></script>
 
-        <!-- 应用核心 -->
-        <script src="js/app/mixins/stateMixin.js"></script>
-        <script src="js/app/mixins/bootstrapMixin.js"></script>
-        <script src="js/app/mixins/lifecycleMixin.js"></script>
-        <script src="js/app/mixins/navigationMixin.js"></script>
-        <script src="js/app/mixins/fallbackMixin.js"></script>
-        <script src="js/app/app.js"></script>
+        <!-- 应用核心 (bundled) -->
+        <script src="assets/dist/app.bundle.js" defer></script>
 
 
 

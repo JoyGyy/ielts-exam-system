@@ -3,6 +3,16 @@
  * 负责应用的初始化和整体协调
  */
 
+// Import mixins - they register on window.ExamSystemAppMixins
+import './mixins/stateMixin.js';
+import './mixins/bootstrapMixin.js';
+import './mixins/lifecycleMixin.js';
+import './mixins/navigationMixin.js';
+import './mixins/fallbackMixin.js';
+
+// Import overviewStats - registers on window.AppServices.overviewStats
+import '../services/overviewStats.js';
+
 class ExamSystemApp {
     constructor() {
         this.currentView = 'overview';
@@ -60,24 +70,22 @@ class ExamSystemApp {
 
 }
 
-(function(global) {
-    function applyMixins() {
-        const mixins = global.ExamSystemAppMixins || {};
-        Object.assign(ExamSystemApp.prototype,
-            mixins.state || {},
-            mixins.bootstrap || {},
-            mixins.lifecycle || {},
-            mixins.navigation || {},
-            mixins.readingLaunch || {},
-            mixins.examSession || {},
-            mixins.fallback || {});
-    }
+function applyMixins() {
+    const mixins = window.ExamSystemAppMixins || {};
+    Object.assign(ExamSystemApp.prototype,
+        mixins.state || {},
+        mixins.bootstrap || {},
+        mixins.lifecycle || {},
+        mixins.navigation || {},
+        mixins.readingLaunch || {},
+        mixins.examSession || {},
+        mixins.fallback || {});
+}
 
-    applyMixins();
+applyMixins();
 
-    global.ExamSystemAppMixins = global.ExamSystemAppMixins || {};
-    global.ExamSystemAppMixins.__applyToApp = applyMixins;
-})(typeof window !== "undefined" ? window : globalThis);
+window.ExamSystemAppMixins = window.ExamSystemAppMixins || {};
+window.ExamSystemAppMixins.__applyToApp = applyMixins;
 
 
 // 新增修复3E：在js/app.js的DOMContentLoaded初始化中去除顶层await
@@ -141,3 +149,5 @@ window.addEventListener('beforeunload', () => {
         window.app.destroy();
     }
 });
+
+export { ExamSystemApp, applyMixins };
