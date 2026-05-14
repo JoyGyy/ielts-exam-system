@@ -113,8 +113,9 @@ const lifecycleMixin = {
             event.preventDefault(); // 防止默认的错误处理
         });
 
-        // 捕获JavaScript错误
+        // 捕获JavaScript错误（过滤脚本加载失败的空错误）
         window.addEventListener('error', (event) => {
+            if (!event.error && event.filename) return; // 脚本加载404，忽略
             console.error('[App] JavaScript错误:', event.error);
             this.handleGlobalError(event.error, 'JavaScript错误');
         });
@@ -306,10 +307,13 @@ const lifecycleMixin = {
      */
     async loadInitialData() {
         try {
-            // 加载考试索引到状态管理
-            const examIndex = await window.storage.get('exam_index', []);
-            if (Array.isArray(examIndex)) {
-                this.setState('exam.index', examIndex);
+            // 加载考试索引到状态管理（如果尚未被 initializeLegacyComponents 填充）
+            const currentExamIndex = this.getState('exam.index');
+            if (!Array.isArray(currentExamIndex) || currentExamIndex.length === 0) {
+                const examIndex = await window.storage.get('exam_index', []);
+                if (Array.isArray(examIndex) && examIndex.length > 0) {
+                    this.setState('exam.index', examIndex);
+                }
             }
 
             // 加载练习记录到状态管理
