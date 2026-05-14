@@ -90,6 +90,7 @@ function loadExamListFallback() {
             item.innerHTML = '<div class="exam-info"><h4>' + (exam.title || '') + '</h4></div>' +
                 '<div class="exam-actions">' +
                 '<button class="btn" onclick="window.openExam(\'' + (exam.id || '') + '\')">开始练习</button>' +
+                '<button class="btn btn-outline" onclick="window.startMockExam(\'' + (exam.id || '') + '\')">模考</button>' +
                 '<button class="btn btn-outline" onclick="window.viewPDF(\'' + (exam.id || '') + '\')">PDF</button>' +
                 '</div>';
             list.appendChild(item);
@@ -168,6 +169,7 @@ function displayExams(exams) {
                 '<div class="exam-meta">' + metaText + '</div></div>' +
                 '<div class="exam-actions">' +
                 '<button class="btn" onclick="window.openExam(\'' + (exam.id || '') + '\')">开始练习</button>' +
+                '<button class="btn btn-outline" onclick="window.startMockExam(\'' + (exam.id || '') + '\')">模考</button>' +
                 '<button class="btn btn-outline" onclick="window.viewPDF(\'' + (exam.id || '') + '\')">PDF</button>' +
                 '</div>';
             list.appendChild(item);
@@ -251,8 +253,7 @@ function openExam(examId, options = {}) {
     }
 
     // 降级：本地完成打开 + 握手重试，确保 sessionId 下发
-    const list = getExamIndexState();
-    const exam = list.find(e => e.id === examId);
+    const exam = window.getExamById ? window.getExamById(examId) : getExamIndexState().find(e => e.id === examId);
     if (!exam) return showMessage('未找到题目', 'error');
     if (!exam.hasHtml) return viewPDF(examId);
 
@@ -304,8 +305,7 @@ function startHandshakeFallback(examWindow, examId) {
 
 function viewPDF(examId) {
     // 增加数组化防御
-    const list = getExamIndexState();
-    const exam = list.find(e => e.id === examId);
+    const exam = window.getExamById ? window.getExamById(examId) : getExamIndexState().find(e => e.id === examId);
     if (!exam || !exam.pdfFilename) return showMessage('未找到PDF文件', 'error');
 
     const fullPath = window.buildResourcePath(exam, 'pdf');
@@ -1032,3 +1032,44 @@ function startRandomPractice(category, type = 'reading', filterMode = null, path
     }
     openExamWithFallback(randomExam);
 }
+
+// --- Mock Exam (模考) ---
+
+window.startMockExam = function (examId) {
+    var exam = window.getExamById ? window.getExamById(examId) : getExamIndexState().find(function (e) { return e.id === examId; });
+    if (!exam) {
+        if (typeof showMessage === 'function') {
+            showMessage('未找到题目', 'error');
+        }
+        return;
+    }
+
+    var duration = exam.type === 'listening' ? 1800 : 3600; // listening 30min, reading 60min
+    var typeLabel = exam.type === 'listening' ? '听力' : '阅读';
+
+    if (!confirm('开始' + typeLabel + '模考\n时间限制：' + (duration / 60) + '分钟\n确定开始吗？')) {
+        return;
+    }
+
+    // Create timer
+    var timer = new window.CountdownTimer({
+        duration: duration,
+        onComplete: function () {
+            // Remove timer UI
+            var ui = document.querySelector('.countdown-timer');
+            if (ui && ui.parentNode) {
+                ui.parentNode.removeChild(ui);
+            }
+            if (typeof showMessage === 'function') {
+                showMessage('时间到！模考结束', 'info');
+            }
+        }
+    });
+
+    var ui = window.createCountdownUI(timer);
+    document.body.prepend(ui);
+    timer.start();
+
+    // Open the exam using existing logic
+    openExamWithFallback(exam);
+};

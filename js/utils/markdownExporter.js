@@ -312,7 +312,7 @@ class MarkdownExporter {
             }
             
             // 获取考试信息
-            const exam = examIndex.find(e => e.id === record.examId);
+            const exam = window.getExamById ? window.getExamById(record.examId) : examIndex.find(e => e.id === record.examId);
             const enhancedRecord = {
                 ...record,
                 examInfo: exam || {},
@@ -347,7 +347,7 @@ class MarkdownExporter {
             }
             
             // 获取考试信息
-            const exam = examIndex.find(e => e.id === record.examId);
+            const exam = window.getExamById ? window.getExamById(record.examId) : examIndex.find(e => e.id === record.examId);
             const enhancedRecord = {
                 ...record,
                 examInfo: exam || {},

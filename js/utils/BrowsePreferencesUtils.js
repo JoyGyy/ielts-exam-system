@@ -372,7 +372,7 @@
             const list = Array.isArray(examIndex) ? examIndex : [];
             let entry = null;
             if (examId) {
-                entry = list.find((exam) => exam && exam.id === examId);
+                entry = window.getExamById ? window.getExamById(examId) : list.find((exam) => exam && exam.id === examId);
             }
             if (!entry && title) {
                 entry = list.find((exam) => exam && exam.title === title);

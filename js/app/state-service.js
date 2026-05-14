@@ -307,6 +307,7 @@
         setExamIndex(list, options = {}) {
             const normalized = assignExamSequenceNumbers(cloneArray(list));
             this.state.examIndex = normalized;
+            try { if (typeof global.buildExamIndex === 'function') global.buildExamIndex(normalized); } catch (_) {}
             if (options.syncApp !== false) {
                 this.applyToApp();
             }

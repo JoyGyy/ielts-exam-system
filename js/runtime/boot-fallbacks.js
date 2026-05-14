@@ -645,6 +645,7 @@
         try { window.setExamIndexState(dataset); } catch (_) { }
       } else {
         try { window.examIndex = Array.isArray(dataset) ? dataset.slice() : []; } catch (_) { }
+        try { if (typeof window.buildExamIndex === 'function') window.buildExamIndex(window.examIndex); } catch (_) { }
       }
       if (options && options.setActive) {
         await _fallbackSetActiveLibraryKey(key);
@@ -904,6 +905,7 @@
         window.setExamIndexState(newIndex);
       } else {
         try { window.examIndex = Array.isArray(newIndex) ? newIndex.slice() : []; } catch (_) { }
+        try { if (typeof window.buildExamIndex === 'function') window.buildExamIndex(window.examIndex); } catch (_) { }
       }
       try { if (typeof window.updateOverview === 'function') window.updateOverview(); } catch (_) { }
       if (document.getElementById('browse-view') && document.getElementById('browse-view').classList.contains('active') && typeof window.loadExamList === 'function') {

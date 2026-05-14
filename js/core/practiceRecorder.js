@@ -109,6 +109,15 @@ export class PracticeRecorder {
             return this.practiceTypeCache.get(examId);
         }
 
+        // Fast path: O(1) Map lookup
+        if (typeof window.getExamById === 'function') {
+            const entry = window.getExamById(examId);
+            if (entry) {
+                this.practiceTypeCache.set(examId, entry);
+                return entry;
+            }
+        }
+
         const sources = [
             () => Array.isArray(window.examIndex) ? window.examIndex : null,
             () => Array.isArray(window.completeExamIndex)
@@ -1997,9 +2006,7 @@ export class PracticeRecorder {
             }
 
             // 获取题目信息
-            const examIndex = await this.metaRepo.get('exam_index', []);
-            const examList = Array.isArray(examIndex) ? examIndex : (Array.isArray(window.examIndex) ? window.examIndex : []);
-            const exam = examList.find(e => e.id === examId);
+            const exam = window.getExamById ? window.getExamById(examId) : null;
 
             if (!exam) {
                 console.error('[PracticeRecorder] 无法找到题目信息:', examId);

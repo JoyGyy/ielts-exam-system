@@ -1058,8 +1058,7 @@ class PracticeRecordModal {
             }
 
             const exporter = new MarkdownExporter();
-            const examIndex = await window.storage.get('exam_index', []);
-            const exam = Array.isArray(examIndex) ? examIndex.find(e => e.id === record.examId) : null;
+            const exam = window.getExamById ? window.getExamById(record.examId) : null;
 
             const enrichedRecord = this.prepareRecordForDisplay({
                 ...record,

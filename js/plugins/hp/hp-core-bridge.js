@@ -343,7 +343,7 @@
         const contextExam = context && context.exam
           ? context.exam
           : (context && context.id && !context.exam ? context : null);
-        const exam = contextExam || exams.find((item) => item && item.id === examId) || {};
+        const exam = contextExam || (window.getExamById ? window.getExamById(examId) : exams.find((item) => item && item.id === examId)) || {};
         const record = window.PracticeCore.ingestor.fromCompletion(payload, {
           examId,
           sessionId: context && context.sessionId ? context.sessionId : null,
@@ -374,7 +374,7 @@
       const contextExam = context && context.exam
         ? context.exam
         : (context && context.id && !context.exam ? context : null);
-      const exam = contextExam || exams.find((item) => item && item.id === examId) || {};
+      const exam = contextExam || (window.getExamById ? window.getExamById(examId) : exams.find((item) => item && item.id === examId)) || {};
       const normalized = normalizePracticePayload(payload);
 
       const totalQuestions = Number.isFinite(normalized.total) ? normalized.total : 0;
@@ -645,7 +645,7 @@
     // data
     getExamIndex() { return this.examIndex || []; },
     getRecords() { return this.practiceRecords || []; },
-    getExamById(id) { return (this.examIndex || []).find(e => e && e.id === id); },
+    getExamById(id) { return window.getExamById ? window.getExamById(id) : (this.examIndex || []).find(e => e && e.id === id); },
 
     // utils
     throttle(func, delay) {
@@ -877,6 +877,7 @@
       synced = cloneArray(stateService.setExamIndex(normalized));
     } else {
       try { window.examIndex = synced.slice(); } catch (_) {}
+      try { if (typeof window.buildExamIndex === 'function') window.buildExamIndex(synced); } catch (_) {}
     }
     hpCore.examIndex = synced;
     return synced;
@@ -944,8 +945,7 @@
       try { if (typeof window.openExam === 'function') return window.openExam(examId); } catch (_) {}
       try { if (window.app && typeof window.app.openExam === 'function') return window.app.openExam(examId); } catch (_) {}
       try {
-        const list = readExamIndexSnapshot();
-        const exam = list.find(function (x) { return x && x.id === examId; });
+        const exam = window.getExamById ? window.getExamById(examId) : readExamIndexSnapshot().find(function (x) { return x && x.id === examId; });
         if (!exam) { this.showMessage('未找到题目', 'error'); return; }
         if (!exam.hasHtml) { this.viewExamPDF(examId); return; }
 
@@ -1023,8 +1023,7 @@
     hpCore.viewExamPDF = function viewExamPDF(examId) {
       try { if (typeof window.viewPDF === 'function') return window.viewPDF(examId); } catch (_) {}
       try {
-        const list = readExamIndexSnapshot();
-        const exam = list.find(function (x) { return x && x.id === examId; });
+        const exam = window.getExamById ? window.getExamById(examId) : readExamIndexSnapshot().find(function (x) { return x && x.id === examId; });
         if (!exam || !exam.pdfFilename) { this.showMessage('未找到PDF文件', 'error'); return; }
 
         const self = this;

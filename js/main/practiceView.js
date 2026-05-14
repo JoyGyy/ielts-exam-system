@@ -594,7 +594,7 @@ function normalizeFallbackAnswerComparison(existingComparison, answerMap, correc
 async function savePracticeRecordFallback(examId, realData) {
     try {
         const list = getExamIndexState();
-        let exam = list.find(e => e.id === examId) || {};
+        let exam = (window.getExamById ? window.getExamById(examId) : null) || list.find(e => e.id === examId) || {};
 
         // 如果通过 examId 找不到，尝试通过 URL 或标题匹配
         if (!exam.id && realData) {

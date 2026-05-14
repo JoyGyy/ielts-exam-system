@@ -123,7 +123,7 @@ class SystemDiagnostics {
      * 测试单个题目的通信功能
      */
     async testExamCommunication(examId, timeout = 10000) {
-        const exam = window.examIndex?.find(e => e.id === examId);
+        const exam = window.getExamById ? window.getExamById(examId) : window.examIndex?.find(e => e.id === examId);
         if (!exam) {
             return {
                 examId,
