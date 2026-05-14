@@ -150,6 +150,9 @@ function loadScript(url) {
         'js/app/examSession/dataInjector.js',
         'js/app/examSession/sessionTracker.js',
         'js/app/examSession/urlBuilder.js',
+        'js/app/examActions.js',
+        'js/app/browseController.js',
+        'js/app/state-service.js',
     ];
 
     scriptStatus[url] = new Promise(function inject(resolve, reject) {
