@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS 听力练习</title>
+    <style>
+        :root {
+            --line: #d7dde5;
+            --panel: #ffffff;
+            --panel-alt: #edf2f9;
+            --text: #1f2937;
+            --muted: #64748b;
+            --accent: #2563eb;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            --correct-bg: #dcfce7;
+            --correct-border: #15803d;
+            --incorrect-bg: #fee2e2;
+            --incorrect-border: #b91c1c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
+
+        body {
+            font-family: "SF Pro Text", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            padding-bottom: 72px;
+        }
+
+        /* Header */
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; padding: 14px 22px;
+            background: rgba(255,255,255,0.94);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+        }
+        .header h1 { font-size: 1.1rem; font-weight: 700; }
+        .header p { font-size: 0.92rem; color: var(--muted); }
+        .header-content { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        #timer, .header-btn {
+            border: 1px solid var(--line); border-radius: 8px;
+            background: var(--panel); padding: 6px 14px;
+            font-size: 0.85rem; cursor: pointer; color: var(--text);
+        }
+        .header-btn:hover { background: var(--panel-alt); }
+        .header-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        #timer { font-variant-numeric: tabular-nums; cursor: default; min-width: 70px; text-align: center; }
+
+        /* Audio Player */
+        .audio-player {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 22px;
+            background: rgba(255,255,255,0.94);
+            border-bottom: 1px solid var(--line);
+        }
+        .play-pause-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 1px solid var(--line); background: var(--panel);
+            font-size: 1.1rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .play-pause-btn:hover { background: var(--panel-alt); }
+        .progress-container { flex: 1; cursor: pointer; padding: 8px 0; }
+        .progress-bar-wrapper {
+            height: 4px; background: var(--line); border-radius: 2px;
+            position: relative; overflow: visible;
+        }
+        .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 0.1s; }
+        .progress-bar-wrapper:hover { height: 6px; }
+        .time-display { font-size: 0.82rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .speed-control select {
+            border: 1px solid var(--line); border-radius: 6px;
+            padding: 4px 8px; font-size: 0.82rem; background: var(--panel);
+            color: var(--text); cursor: pointer;
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex; height: calc(100vh - 72px - 56px);
+        }
+        .questions-panel {
+            flex: 1; overflow-y: auto; padding: 22px;
+            scroll-behavior: smooth;
+        }
+        .transcript-panel {
+            width: 380px; border-left: 1px solid var(--line);
+            background: rgba(255,255,255,0.94); overflow-y: auto;
+            padding: 18px; display: none; font-size: 0.9rem;
+            line-height: 1.7;
+        }
+        .transcript-panel.visible { display: block; }
+        .transcript-panel h4 { margin-bottom: 12px; font-size: 1rem; }
+        .transcript-line { padding: 3px 0; color: var(--muted); cursor: pointer; }
+        .transcript-line.active { color: var(--text); font-weight: 500; }
+        .transcript-line:hover { background: rgba(37, 99, 235, 0.05); }
+        .transcript-line .time { font-size: 0.78rem; color: var(--muted); margin-right: 8px; }
+
+        /* Questions */
+        .group { margin-bottom: 24px; }
+        .group h4 { font-size: 1rem; margin-bottom: 8px; }
+        .group .instructions { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
+        .question-item { margin-bottom: 10px; }
+
+        input.blank {
+            border: 1.5px solid #777; border-radius: 4px;
+            width: 10em; padding: 4px 6px; vertical-align: middle;
+            text-align: center; font-size: 1em;
+            background: transparent; color: var(--text);
+            transition: all 0.2s ease-in-out;
+        }
+        input.blank:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 3px var(--accent); }
+        input.blank.input-correct { border-color: var(--correct-border); background-color: var(--correct-bg); }
+        input.blank.input-incorrect { border-color: var(--incorrect-border); background-color: var(--incorrect-bg); }
+
+        label { display: block; margin: 4px 0; cursor: pointer; font-size: 0.95rem; }
+        label input[type="radio"], label input[type="checkbox"] { margin-right: 6px; }
+
+        .match-row { display: flex; align-items: center; gap: 12px; margin: 6px 0; }
+        .match-q { min-width: 140px; }
+        .match-slot {
+            display: inline-block; min-width: 60px; min-height: 28px;
+            border: 1.5px dashed #aaa; border-radius: 4px;
+            text-align: center; line-height: 28px;
+        }
+        .match-slot.filled { border-style: solid; background: var(--panel-alt); }
+
+        .matching-options { margin-top: 12px; }
+        .drag-pool { display: flex; flex-wrap: wrap; gap: 8px; }
+        .drag-option {
+            padding: 4px 10px; border: 1px solid var(--line);
+            border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+            background: var(--panel);
+        }
+        .drag-option:hover { background: var(--panel-alt); }
+        .drag-option.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Question table (for P1 table completion) */
+        .question-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.93rem; }
+        .question-table th, .question-table td {
+            border: 1px solid var(--line); padding: 8px 10px; text-align: left;
+        }
+        .question-table th { background: var(--panel-alt); font-weight: 600; }
+        .input-cell { vertical-align: top; }
+
+        /* Results */
+        .results-in-page { margin-top: 20px; }
+        .results-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .results-table th, .results-table td {
+            border: 1px solid var(--line); padding: 8px 10px; text-align: left;
+        }
+        .results-table th { background: var(--panel-alt); }
+        .results-table .correct { color: var(--success); }
+        .results-table .incorrect { color: var(--danger); }
+
+        /* Bottom nav */
+        .practice-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 22px;
+            background: rgba(255,255,255,0.96);
+            border-top: 1px solid var(--line);
+            box-shadow: 0 -2px 8px rgba(15,23,42,0.04);
+            z-index: 100;
+        }
+        .practice-nav .title { font-size: 0.85rem; color: var(--muted); white-space: nowrap; }
+        .practice-nav .questions { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+        .practice-nav .questions button {
+            width: 30px; height: 30px; border-radius: 6px;
+            border: 1px solid var(--line); background: var(--panel);
+            font-size: 0.78rem; cursor: pointer; color: var(--text);
+        }
+        .practice-nav .questions button.answered { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .practice-nav .questions button.correct { background: var(--success); color: #fff; border-color: var(--success); }
+        .practice-nav .questions button.incorrect { background: var(--danger); color: #fff; border-color: var(--danger); }
+        .practice-nav .controls { display: flex; gap: 8px; }
+        .practice-nav .controls button {
+            padding: 6px 16px; border-radius: 8px;
+            border: 1px solid var(--line); background: var(--panel);
+            font-size: 0.85rem; cursor: pointer;
+        }
+        .practice-nav .controls button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Selection toolbar */
+        #selbar {
+            display: none; position: fixed; z-index: 200;
+            background: #1f2937; border-radius: 8px; padding: 4px 8px;
+            box-shadow: var(--shadow);
+        }
+        #selbar button {
+            background: none; border: none; color: #fff;
+            padding: 4px 10px; cursor: pointer; font-size: 0.82rem;
+            border-radius: 4px;
+        }
+        #selbar button:hover { background: rgba(255,255,255,0.15); }
+        .transcript-line.answer-line {
+            background: #fef08a;
+            border-left: 3px solid var(--accent);
+            padding-left: 8px;
+            border-radius: 4px;
+        }
+        .transcript-line .answer-highlight {
+            background: #fbbf24;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 id="exam-title">IELTS Listening</h1>
+            <p id="exam-subtitle"></p>
+        </div>
+        <div class="header-controls">
+            <div id="timer">00:00</div>
+            <button class="header-btn" id="transcript-toggle" type="button">Transcript</button>
+            <button class="header-btn" id="settings-btn" type="button">Settings</button>
+        </div>
+    </div>
+
+    <div class="audio-player" id="audio-player">
+        <button class="play-pause-btn" id="play-pause-btn" type="button">&#9658;</button>
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+        <div class="time-display" id="time-display">00:00 / 00:00</div>
+        <div class="speed-control">
+            <select id="playback-speed">
+                <option value="0.7">0.7x</option>
+                <option value="1.0" selected>1.0x</option>
+                <option value="1.1">1.1x</option>
+                <option value="1.2">1.2x</option>
+                <option value="1.3">1.3x</option>
+                <option value="1.5">1.5x</option>
+            </select>
+        </div>
+        <audio class="listening-audio" id="listening-audio" preload="metadata"></audio>
+    </div>
+
+    <div class="main-content">
+        <section class="questions-panel" id="questions-container">
+            <div id="questions-content"></div>
+            <div class="results-in-page" id="results"></div>
+        </section>
+        <aside class="transcript-panel" id="transcript-panel">
+            <h4>Transcript</h4>
+            <div id="transcript-content"></div>
+        </aside>
+    </div>
+
+    <div id="selbar">
+        <button type="button" id="btnHL" data-role="highlight">Highlight</button>
+        <button type="button" id="btnUH" data-role="remove-highlight">Remove</button>
+        <button type="button" id="btnNote" data-role="note">Note</button>
+    </div>
+
+    <div class="practice-nav">
+        <div class="title">题目导航</div>
+        <div class="questions" id="question-nav"></div>
+        <div class="controls">
+            <button id="exit-btn" type="button" title="退出" style="margin-right: 8px; display: none;">Exit</button>
+            <button id="reset-btn" type="button">Reset</button>
+            <button id="submit-btn" class="primary" type="button">Submit</button>
+        </div>
+    </div>
+
+    <script src="../../../js/runtime/examPages/listeningExamRegistry.js"></script>
+    <script src="./manifest.js"></script>
+    <script src="../../../js/utils/answerMatchCore.js"></script>
+    <script src="../../../js/runtime/examPages/unifiedListeningPage.js"></script>
+</body>
+
+</html>
