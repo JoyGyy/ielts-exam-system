@@ -1,0 +1,14 @@
+{
+  "name": "ielts-practice",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node build.js --dev",
+    "build": "node build.js --production",
+    "check": "node build.js --check"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}
