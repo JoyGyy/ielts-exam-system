@@ -47,6 +47,11 @@ const GROUPS = {
         'js/utils/performance.js',
         'js/utils/typeChecker.js',
         'js/utils/codeStandards.js',
+        // main.js 子模块（按依赖顺序加载）
+        'js/main/viewHelpers.js',
+        'js/main/globalShims.js',
+        'js/main/practiceView.js',
+        'js/main/examListManager.js',
         'js/main.js'
     ],
     'more-tools': [

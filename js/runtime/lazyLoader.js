@@ -51,6 +51,11 @@
             'js/utils/performance.js',
             'js/utils/typeChecker.js',
             'js/utils/codeStandards.js',
+            // main.js 子模块（按依赖顺序加载）
+            'js/main/viewHelpers.js',
+            'js/main/globalShims.js',
+            'js/main/practiceView.js',
+            'js/main/examListManager.js',
             'js/main.js'
         ];
 
@@ -198,8 +203,16 @@
             // 回退：逐文件加载
             if (groupName === 'browse-runtime') {
                 var mainIndex = list.indexOf('js/main.js');
+                var mainSubModules = [
+                    'js/main/viewHelpers.js',
+                    'js/main/globalShims.js',
+                    'js/main/practiceView.js',
+                    'js/main/examListManager.js'
+                ];
                 var withoutMain = mainIndex >= 0
-                    ? list.filter(function (file) { return file !== 'js/main.js'; })
+                    ? list.filter(function (file) {
+                        return file !== 'js/main.js' && mainSubModules.indexOf(file) === -1;
+                    })
                     : list.slice();
 
                 var batches = [
@@ -217,6 +230,10 @@
                         ].indexOf(file) === -1;
                     })
                 ];
+                // main.js 子模块（在 main.js 之前加载）
+                batches.push(mainSubModules.filter(function (file) {
+                    return list.indexOf(file) !== -1;
+                }));
                 if (mainIndex >= 0) {
                     batches.push(['js/main.js']);
                 }
