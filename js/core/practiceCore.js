@@ -1,3 +1,5 @@
+import { normalizePracticeType } from '../shared/normalizePracticeType.js';
+
 (function initPracticeCore(global) {
     'use strict';
 
@@ -89,14 +91,6 @@
     function ensureNumber(value, fallback = 0) {
         const numeric = Number(value);
         return Number.isFinite(numeric) ? numeric : fallback;
-    }
-
-    function normalizePracticeType(rawType) {
-        if (!rawType) return null;
-        const normalized = String(rawType).toLowerCase();
-        if (normalized.includes('listen')) return 'listening';
-        if (normalized.includes('read')) return 'reading';
-        return null;
     }
 
     function resolveRecordDate(recordData = {}, now = new Date().toISOString()) {

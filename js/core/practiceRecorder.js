@@ -1,3 +1,5 @@
+import { normalizePracticeType } from '../shared/normalizePracticeType.js';
+
 const AnswerSanitizer = (typeof window !== 'undefined' && window.AnswerSanitizer)
     ? window.AnswerSanitizer
     : null;
@@ -36,15 +38,7 @@ class PracticeRecorder {
     }
 
     normalizePracticeType(rawType) {
-        const coreContracts = window.PracticeCore && window.PracticeCore.contracts;
-        if (coreContracts && typeof coreContracts.normalizePracticeType === 'function') {
-            return coreContracts.normalizePracticeType(rawType);
-        }
-        if (!rawType) return null;
-        const normalized = String(rawType).toLowerCase();
-        if (normalized.includes('listen')) return 'listening';
-        if (normalized.includes('read')) return 'reading';
-        return null;
+        return normalizePracticeType(rawType);
     }
 
     isInTestEnvironment() {

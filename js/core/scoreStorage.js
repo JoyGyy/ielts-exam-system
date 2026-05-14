@@ -1,3 +1,5 @@
+import { normalizePracticeType } from '../shared/normalizePracticeType.js';
+
 /**
  * 成绩记录和存储系统
  * 负责答题结果解析、标准化存储和数据备份恢复
@@ -49,15 +51,7 @@ class ScoreStorage {
     }
 
     normalizePracticeType(rawType) {
-        const coreContracts = window.PracticeCore && window.PracticeCore.contracts;
-        if (coreContracts && typeof coreContracts.normalizePracticeType === 'function') {
-            return coreContracts.normalizePracticeType(rawType);
-        }
-        if (!rawType) return null;
-        const normalized = String(rawType).toLowerCase();
-        if (normalized.includes('listen')) return 'listening';
-        if (normalized.includes('read')) return 'reading';
-        return null;
+        return normalizePracticeType(rawType);
     }
 
     inferPracticeType(recordData = {}) {
