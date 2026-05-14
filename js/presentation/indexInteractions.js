@@ -14,7 +14,7 @@
             ? global.AppEntry.ensureBrowseGroup
             : function fallback() { return Promise.resolve(); };
         loader().catch(function swallow(error) {
-            console.warn('[IndexInteractions] 预加载 browse-view 失败:', error);
+            console.warn('[IndexInteractions] 预加载 browse-runtime 失败:', error);
         });
     }
 

@@ -1041,7 +1041,7 @@
             return global.AppEntry.ensureBrowseGroup();
         }
         if (global.AppLazyLoader && typeof global.AppLazyLoader.ensureGroup === 'function') {
-            return global.AppLazyLoader.ensureGroup('browse-view');
+            return global.AppLazyLoader.ensureGroup('browse-runtime');
         }
         return Promise.resolve();
     }

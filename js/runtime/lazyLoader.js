@@ -54,9 +54,6 @@
             'js/main.js'
         ];
 
-        // 向后兼容旧组名
-        manifest['browse-view'] = manifest['browse-runtime'].slice();
-
         manifest['more-tools'] = [
             'js/presentation/moreView.js'
         ];
@@ -65,7 +62,6 @@
         dependencies['exam-data'] = [];
         dependencies['practice-suite'] = ['state-core'];
         dependencies['browse-runtime'] = ['state-core'];
-        dependencies['browse-view'] = ['state-core'];
         dependencies['more-tools'] = ['state-core'];
     }
 
@@ -200,7 +196,7 @@
                 return;
             }
             // 回退：逐文件加载
-            if (groupName === 'browse-runtime' || groupName === 'browse-view') {
+            if (groupName === 'browse-runtime') {
                 var mainIndex = list.indexOf('js/main.js');
                 var withoutMain = mainIndex >= 0
                     ? list.filter(function (file) { return file !== 'js/main.js'; })
@@ -233,12 +229,8 @@
         return scriptStatus[bundleKey];
     }
 
-    function mirrorAliasStatus(groupName, statusValue) {
-        if (groupName === 'browse-runtime') {
-            groupStatus['browse-view'] = statusValue;
-        } else if (groupName === 'browse-view') {
-            groupStatus['browse-runtime'] = statusValue;
-        }
+    function mirrorAliasStatus() {
+        // No-op: browse-view alias has been removed
     }
 
     function refreshAppPrototypeIfNeeded(groupName) {

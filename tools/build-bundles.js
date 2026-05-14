@@ -96,13 +96,6 @@ for (const [name, files] of Object.entries(GROUPS)) {
     totalFiles += files.length;
 }
 
-// 处理 browse-view 别名
-const browseViewSrc = path.join(OUT_DIR, 'browse-runtime.bundle.js');
-const browseViewDst = path.join(OUT_DIR, 'browse-view.bundle.js');
-if (fs.existsSync(browseViewSrc)) {
-    fs.copyFileSync(browseViewSrc, browseViewDst);
-}
-
 console.log('\n总计: ' + totalFiles + ' 文件 → ' + Object.keys(GROUPS).length + ' 个 bundle');
 console.log('减少 HTTP 请求: ~' + totalSaved + ' 个');
 console.log('输出目录: assets/bundles/');

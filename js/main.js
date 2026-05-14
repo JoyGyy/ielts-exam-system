@@ -61,7 +61,7 @@ if (typeof window.ensureBrowseGroup !== 'function') {
     };
 }
 
-// getLibraryManager - 保留在 main.js（依赖 browse-view 组加载后的全局对象）
+// getLibraryManager - 保留在 main.js（依赖 browse-runtime 组加载后的全局对象）
 function getLibraryManager() {
     if (window.LibraryManager && typeof window.LibraryManager.getInstance === 'function') {
         return window.LibraryManager.getInstance();
@@ -75,7 +75,7 @@ async function ensureLibraryManagerReady() {
     if (manager) {
         return manager;
     }
-    // 确保 browse-view 组加载（LibraryManager 在该组中）
+    // 确保 browse-runtime 组加载（LibraryManager 在该组中）
     if (typeof window.ensureBrowseGroup === 'function') {
         await window.ensureBrowseGroup();
     }
@@ -2037,9 +2037,9 @@ function loadExamList() {
     if (window.ExamActions && typeof window.ExamActions.loadExamList === 'function') {
         return window.ExamActions.loadExamList();
     }
-    console.warn('[main.js] ExamActions.loadExamList 未就绪，尝试加载 browse-view 组');
+    console.warn('[main.js] ExamActions.loadExamList 未就绪，尝试加载 browse-runtime 组');
     if (window.AppLazyLoader && typeof window.AppLazyLoader.ensureGroup === 'function') {
-        window.AppLazyLoader.ensureGroup('browse-view').then(function () {
+        window.AppLazyLoader.ensureGroup('browse-runtime').then(function () {
             if (window.ExamActions && typeof window.ExamActions.loadExamList === 'function') {
                 window.ExamActions.loadExamList();
             } else {
@@ -2047,7 +2047,7 @@ function loadExamList() {
                 loadExamListFallback();
             }
         }).catch(function (err) {
-            console.error('[main.js] browse-view 组加载失败:', err);
+            console.error('[main.js] browse-runtime 组加载失败:', err);
             loadExamListFallback();
         });
     } else {
@@ -2144,7 +2144,7 @@ function resetBrowseViewToAll() {
     window.__browsePath = null;
 
     if (window.AppLazyLoader && typeof window.AppLazyLoader.ensureGroup === 'function') {
-        window.AppLazyLoader.ensureGroup('browse-view').then(function () {
+        window.AppLazyLoader.ensureGroup('browse-runtime').then(function () {
             if (window.ExamActions && typeof window.ExamActions.resetBrowseViewToAll === 'function') {
                 window.ExamActions.resetBrowseViewToAll();
             } else {
