@@ -735,13 +735,13 @@
 
         <!-- 启动与懒加载工具 -->
 
-        <script src="js/runtime/lazyLoader.js" defer></script>
+        <script type="module" src="js/runtime/lazyLoader.js"></script>
         <script src="js/presentation/app-actions.js" defer></script>
         <script src="js/features/countdownTimer.js" defer></script>
 
         <!-- 基础环境与日志 -->
-        <script src="js/utils/environmentDetector.js"></script>
-        <script src="js/utils/logger.js"></script>
+        <script type="module" src="js/utils/environmentDetector.js"></script>
+        <script type="module" src="js/utils/logger.js"></script>
         <script src="js/utils/storage/indexedDBAdapter.js"></script>
         <script src="js/utils/storage/localStorageAdapter.js"></script>
         <script src="js/utils/storage/storageManager.js"></script>
@@ -754,19 +754,19 @@
         <script src="js/data/repositories/settingsRepository.js"></script>
         <script src="js/data/repositories/metaRepository.js"></script>
         <script src="js/data/index.js"></script>
-        <script src="js/core/practiceCore.js"></script>
+        <script type="module" src="js/core/practiceCore.js"></script>
         <script src="js/core/resourceCore.js"></script>
         <script src="assets/generated/reading-exams/manifest.js"></script>
         <script src="js/utils/stateSerializer.js"></script>
         <script src="js/utils/simpleStorageWrapper.js"></script>
 
         <!-- 工具库与基础视图 -->
-        <script src="js/utils/dom.js"></script>
+        <script type="module" src="js/utils/dom.js"></script>
         <script src="js/views/overviewView.js"></script>
         <script src="js/presentation/navigation-controller.js"></script>
 
         <!-- 入口与懒加载代理 -->
-        <script src="js/app/main-entry.js"></script>
+        <script type="module" src="js/app/main-entry.js"></script>
         <script src="js/presentation/indexInteractions.js"></script>
         <script src="js/presentation/emojiIconizer.js"></script>
         <script src="js/runtime/boot-fallbacks.js"></script>
