@@ -124,10 +124,42 @@ function loadScript(url) {
         return Promise.resolve();
     }
 
+    // 含有 ES 模块语法的文件列表（export/import 语句）
+    var ES_MODULE_FILES = [
+        'js/runtime/lazyLoader.js',
+        'js/utils/environmentDetector.js',
+        'js/utils/logger.js',
+        'js/core/practiceCore.js',
+        'js/utils/dom.js',
+        'js/app/main-entry.js',
+        'js/core/practiceRecorder.js',
+        'js/core/scoreStorage.js',
+        'js/services/libraryManager.js',
+        'js/services/overviewStats.js',
+        'js/app/mixins/stateMixin.js',
+        'js/app/mixins/bootstrapMixin.js',
+        'js/app/mixins/lifecycleMixin.js',
+        'js/app/mixins/navigationMixin.js',
+        'js/app/mixins/fallbackMixin.js',
+        'js/app/app.js',
+        'js/shared/normalizePracticeType.js',
+        'js/shared/constants.js',
+        'js/shared/examIndex.js',
+        'js/app/examSessionMixin.js',
+        'js/app/examSession/windowManager.js',
+        'js/app/examSession/dataInjector.js',
+        'js/app/examSession/sessionTracker.js',
+        'js/app/examSession/urlBuilder.js',
+    ];
+
     scriptStatus[url] = new Promise(function inject(resolve, reject) {
         var script = document.createElement('script');
         script.src = url;
         script.async = true;
+        // ES 模块文件需要 type="module"
+        if (ES_MODULE_FILES.indexOf(url) !== -1) {
+            script.type = 'module';
+        }
         script.onload = function handleLoad() {
             scriptStatus[url] = 'loaded';
             resolve();
