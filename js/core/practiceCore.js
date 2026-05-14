@@ -1,13 +1,6 @@
 import { normalizePracticeType } from '../shared/normalizePracticeType.js';
 
-(function initPracticeCore(global) {
-    'use strict';
-
-    if (global.PracticeCore && global.PracticeCore.__stable === true) {
-        return;
-    }
-
-    const MESSAGE_TYPE_ALIASES = Object.freeze({
+const MESSAGE_TYPE_ALIASES = Object.freeze({
         practice_complete: 'PRACTICE_COMPLETE',
         practice_completed: 'PRACTICE_COMPLETE',
         PracticeComplete: 'PRACTICE_COMPLETE',
@@ -138,7 +131,7 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
     }
 
     function normalizeAnswerValue(value) {
-        const sanitizer = global.AnswerSanitizer;
+        const sanitizer = window.AnswerSanitizer;
         if (sanitizer && typeof sanitizer.normalizeValue === 'function') {
             return sanitizer.normalizeValue(value);
         }
@@ -265,7 +258,7 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
             return {};
         }
 
-        const sanitizer = global.AnswerSanitizer;
+        const sanitizer = window.AnswerSanitizer;
         if (sanitizer && typeof sanitizer.sanitizeComparisonMap === 'function') {
             return sanitizer.sanitizeComparisonMap(comparison);
         }
@@ -334,7 +327,7 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
             const correctAnswer = normalizeAnswerValue(correctMap[questionId]);
             let isCorrect = null;
             if (correctAnswer) {
-                const matchCore = global.AnswerMatchCore;
+                const matchCore = window.AnswerMatchCore;
                 isCorrect = matchCore && typeof matchCore.compareAnswers === 'function'
                     ? matchCore.compareAnswers(userAnswer, correctAnswer) === true
                     : userAnswer.toLowerCase() === correctAnswer.toLowerCase();
@@ -930,28 +923,28 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
     }
 
     function getRepositories() {
-        return global.dataRepositories || null;
+        return window.dataRepositories || null;
     }
 
     function getStorageManager(storageManager) {
-        return storageManager || global.storage || null;
+        return storageManager || window.storage || null;
     }
 
     function syncPracticeRecordState(records) {
         const syncAppState = (nextRecords) => {
             try {
-                if (global.app && global.app.state && global.app.state.practice) {
-                    global.app.state.practice.records = Array.isArray(nextRecords) ? nextRecords.slice() : [];
+                if (window.app && window.app.state && window.app.state.practice) {
+                    window.app.state.practice.records = Array.isArray(nextRecords) ? nextRecords.slice() : [];
                 }
             } catch (_) {}
         };
 
-        if (typeof global.setPracticeRecordsState === 'function') {
+        if (typeof window.setPracticeRecordsState === 'function') {
             try {
-                const finalRecords = global.setPracticeRecordsState(records);
+                const finalRecords = window.setPracticeRecordsState(records);
                 syncAppState(finalRecords);
                 try {
-                    global.practiceRecords = Array.isArray(finalRecords) ? finalRecords.slice() : [];
+                    window.practiceRecords = Array.isArray(finalRecords) ? finalRecords.slice() : [];
                 } catch (_) {}
                 return;
             } catch (error) {
@@ -960,7 +953,7 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
         }
         syncAppState(records);
         try {
-            global.practiceRecords = Array.isArray(records) ? records.slice() : [];
+            window.practiceRecords = Array.isArray(records) ? records.slice() : [];
         } catch (_) {}
     }
 
@@ -1179,12 +1172,16 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
         syncPracticeRecordState
     });
 
-    global.PracticeCore = {
-        __stable: true,
-        version: '1.0.0',
-        contracts,
-        protocol,
-        ingestor,
-        store
-    };
-})(typeof window !== 'undefined' ? window : globalThis);
+const PracticeCore = {
+    __stable: true,
+    version: '1.0.0',
+    contracts,
+    protocol,
+    ingestor,
+    store
+};
+
+// Backward compatibility
+window.PracticeCore = PracticeCore;
+
+export { PracticeCore };

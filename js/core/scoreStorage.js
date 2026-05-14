@@ -4,7 +4,7 @@ import { normalizePracticeType } from '../shared/normalizePracticeType.js';
  * 成绩记录和存储系统
  * 负责答题结果解析、标准化存储和数据备份恢复
  */
-class ScoreStorage {
+export class ScoreStorage {
     constructor(options = {}) {
         this.repositories = options.repositories || window.dataRepositories;
         if (!this.repositories) {

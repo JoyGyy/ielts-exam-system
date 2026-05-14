@@ -8,7 +8,7 @@ const AnswerSanitizer = (typeof window !== 'undefined' && window.AnswerSanitizer
  * 练习记录管理器
  * 负责练习会话管理、成绩记录和数据持久化
  */
-class PracticeRecorder {
+export class PracticeRecorder {
     constructor() {
         this.activeSessions = new Map();
         this.sessionListeners = new Map();
