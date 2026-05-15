@@ -58,6 +58,7 @@
         window.ensurePracticeRecordsSync('practice-view').catch(function () { });
       }
       if (normalized === 'practice' && typeof window.updatePracticeView === 'function') window.updatePracticeView();
+      if (normalized === 'mistakes' && typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.init === 'function') window.MistakeBookView.init();
     };
   }
 
@@ -915,7 +916,7 @@
     };
   }
 
-  const VALID_INITIAL_VIEWS = ['browse', 'practice'];
+  const VALID_INITIAL_VIEWS = ['browse', 'practice', 'mistakes'];
 
   function readQueryView() {
     try {

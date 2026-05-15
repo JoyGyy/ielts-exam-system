@@ -319,22 +319,23 @@ class PracticeRecordModal {
     }
 
     formatSuiteEntryTitle(entry, index) {
-        if (normalized === 'suite') {
+        const freq = entry && entry.frequency ? String(entry.frequency) : '';
+        if (freq === 'suite') {
             return '\u5957\u9898\u7ec3\u4e60';
         }
-        if (normalized === 'high' || normalized === '\u9ad8\u9891') {
+        if (freq === 'high' || freq === '\u9ad8\u9891') {
             return '\u9ad8\u9891';
         }
-        if (normalized === 'mid' || normalized === 'medium' || normalized === '\u4e2d\u9891') {
+        if (freq === 'mid' || freq === 'medium' || freq === '\u4e2d\u9891') {
             return '\u4e2d\u9891';
         }
-        if (normalized === 'low' || normalized === '\u4f4e\u9891') {
+        if (freq === 'low' || freq === '\u4f4e\u9891') {
             return '\u4f4e\u9891';
         }
-        if (normalized === '\u6b21\u9ad8\u9891') {
+        if (freq === '\u6b21\u9ad8\u9891') {
             return '\u6b21\u9ad8\u9891';
         }
-        if (normalized === '\u672a\u77e5\u9891\u7387') {
+        if (freq === '\u672a\u77e5\u9891\u7387') {
             return '\u672a\u77e5\u9891\u7387';
         }
         return '\u672a\u77e5\u9891\u7387';

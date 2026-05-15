@@ -105,7 +105,8 @@ class LocalStorageAdapter {
             const keys = Object.keys(localStorage);
             keys.forEach(key => {
                 if (key.startsWith(prefix)) {
-                    used += localStorage.getItem(key).length;
+                    const val = localStorage.getItem(key);
+                    if (val != null) used += val.length;
                 }
             });
             return used;

@@ -91,6 +91,11 @@ const navigationMixin = {
                         console.error('[App] 激活练习视图失败:', error);
                     });
                 break;
+            case 'mistakes':
+                if (typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.init === 'function') {
+                    window.MistakeBookView.init();
+                }
+                break;
         }
     },
 

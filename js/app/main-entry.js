@@ -359,6 +359,19 @@ if (document.readyState === 'loading') {
     init();
 }
 
+// 错题本懒加载代理
+ensureGlobalFunctionAfterGroup('filterMistakesByType', 'browse-runtime', function (type) {
+    if (typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.setFilter === 'function') {
+        window.MistakeBookView.setFilter(type);
+    }
+});
+
+ensureGlobalFunctionAfterGroup('searchMistakes', 'browse-runtime', function (query) {
+    if (typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.setSearch === 'function') {
+        window.MistakeBookView.setSearch(query);
+    }
+});
+
 // Backward compatibility: expose on window
 window.AppEntry = Object.assign({}, window.AppEntry || {}, {
     STRICT_ON_DEMAND: STRICT_ON_DEMAND,

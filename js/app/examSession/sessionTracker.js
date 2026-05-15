@@ -284,6 +284,18 @@
                 // 更新UI状态
                 this.updateExamStatus(examId, 'completed');
 
+                // 自动收集错题
+                try {
+                    if (window.MistakeBook && typeof window.MistakeBook.addMistakesFromRecord === 'function') {
+                        var mistakeCount = window.MistakeBook.addMistakesFromRecord(data);
+                        if (mistakeCount > 0) {
+                            console.log('[DataCollection] 收集了 ' + mistakeCount + ' 道错题');
+                        }
+                    }
+                } catch (mistakeErr) {
+                    console.warn('[DataCollection] 收集错题失败（不影响主流程）:', mistakeErr);
+                }
+
                 // 显示完成通知（使用真实数据）
                 this.showRealCompletionNotification(examId, data);
 

@@ -637,7 +637,8 @@ class StorageManager {
             const keys = Object.keys(localStorage);
             keys.forEach(key => {
                 if (key.startsWith(this.prefix)) {
-                    used += localStorage.getItem(key).length;
+                    const val = localStorage.getItem(key);
+                    if (val != null) used += val.length;
                 }
             });
 
@@ -909,15 +910,20 @@ class StorageManager {
 
     // ==================== 错误处理 ====================
 
-    handleStorageQuotaExceeded(key, value) {
+    async handleStorageQuotaExceeded(key, value) {
         console.error('[Storage] 存储配额超限，无法保存数据:', key);
 
         if (window.showMessage) {
             window.showMessage('存储空间不足，系统已自动清理旧数据，请稍后重试', 'warning');
         }
 
+        let storageInfo = {};
+        try {
+            storageInfo = await this.getStorageInfo();
+        } catch (_) {}
+
         document.dispatchEvent(new CustomEvent('storageQuotaExceeded', {
-            detail: { key, value, storageInfo: this.getStorageInfo() }
+            detail: { key, value, storageInfo }
         }));
     }
 

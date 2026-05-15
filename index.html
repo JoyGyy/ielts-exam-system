@@ -48,6 +48,13 @@
                 >
                     练习记录
                 </button>
+                <button
+                    class="nav-btn hero-nav__btn"
+                    type="button"
+                    data-view="mistakes"
+                >
+                    错题本
+                </button>
             </nav>
 
             <!-- 题库浏览页面 -->
@@ -321,6 +328,83 @@
                 </div>
             </div>
 
+            <!-- 错题本页面 -->
+            <div id="mistakes-view" class="view hero-panel hero-section">
+                <div class="hero-panel__header">
+                    <h2 class="hero-panel__title" style="margin: 0;">错题本</h2>
+                    <div class="hero-panel__actions">
+                        <button
+                            class="btn btn-warning hero-btn hero-btn--warn"
+                            onclick="clearMistakeBook()"
+                        >
+                            🗑️ 清空错题本
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mistakes-stats hero-grid hero-grid--stats">
+                    <div class="hero-card hero-card--stat">
+                        <div class="hero-card__label">总错题</div>
+                        <div class="hero-card__value" id="mistake-total">0</div>
+                    </div>
+                    <div class="hero-card hero-card--stat">
+                        <div class="hero-card__label">已掌握</div>
+                        <div class="hero-card__value" id="mistake-mastered">0</div>
+                    </div>
+                    <div class="hero-card hero-card--stat">
+                        <div class="hero-card__label">待复习</div>
+                        <div class="hero-card__value" id="mistake-unmastered">0</div>
+                    </div>
+                </div>
+
+                <div class="mistake-filter-bar">
+                    <div
+                        id="mistakes-type-filter"
+                        class="shui-filter-group shui-segmented-control"
+                    >
+                        <button
+                            class="shui-segmented-btn active"
+                            type="button"
+                            aria-pressed="true"
+                            data-filter-type="all"
+                            onclick="filterMistakesByType('all')"
+                        >
+                            全部
+                        </button>
+                        <button
+                            class="shui-segmented-btn"
+                            type="button"
+                            aria-pressed="false"
+                            data-filter-type="reading"
+                            onclick="filterMistakesByType('reading')"
+                        >
+                            阅读
+                        </button>
+                        <button
+                            class="shui-segmented-btn"
+                            type="button"
+                            aria-pressed="false"
+                            data-filter-type="listening"
+                            onclick="filterMistakesByType('listening')"
+                        >
+                            听力
+                        </button>
+                    </div>
+                    <div class="search-input-wrap">
+                        <input
+                            type="text"
+                            class="search-input"
+                            id="mistake-search-input"
+                            placeholder="搜索题目..."
+                            aria-label="搜索错题"
+                            onkeyup="searchMistakes(this.value)"
+                        />
+                    </div>
+                </div>
+
+                <div id="mistake-list" class="mistake-list"></div>
+            </div>
+
         </div>
 
         <!-- 简单计时器（做题时显示） -->
@@ -354,6 +438,7 @@
         <script src="js/data/repositories/settingsRepository.js"></script>
         <script src="js/data/repositories/metaRepository.js"></script>
         <script src="js/data/index.js"></script>
+        <script src="js/data/mistakeBook.js"></script>
         <script type="module" src="js/core/practiceCore.js"></script>
         <script src="js/core/resourceCore.js"></script>
         <script src="assets/generated/reading-exams/manifest.js"></script>
@@ -364,6 +449,7 @@
         <!-- 工具库与基础视图 -->
         <script type="module" src="js/utils/dom.js"></script>
         <script src="js/presentation/navigation-controller.js"></script>
+        <script src="js/presentation/mistakeBookView.js"></script>
 
         <!-- 入口与懒加载代理 -->
         <script type="module" src="js/app/main-entry.js"></script>
@@ -372,8 +458,8 @@
         <script src="js/runtime/boot-fallbacks.js"></script>
         <script src="js/patches/runtime-fixes.js"></script>
 
-        <!-- 应用核心 (bundled) -->
-        <script src="assets/dist/app.bundle.js" defer></script>
+        <!-- 应用核心 (source) -->
+        <script type="module" src="js/app/app.js"></script>
 
     </body>
 </html>

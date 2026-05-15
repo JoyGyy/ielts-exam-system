@@ -236,158 +236,10 @@
 
     function closeFloatingPanels() {
         const settingsPanel = document.getElementById('settings-panel');
-        const notesPanel = document.getElementById('notes-panel');
-        const overlay = document.querySelector('.overlay');
         if (settingsPanel) settingsPanel.style.display = 'none';
-        if (notesPanel) notesPanel.style.display = 'none';
-        if (overlay) overlay.style.display = 'none';
     }
 
     function attachUnifiedPanels() {
-        const settingsPanel = document.getElementById('settings-panel');
-        const notesPanel = document.getElementById('notes-panel');
-        const overlay = document.querySelector('.overlay');
-        const settingsBtn = document.getElementById('settings-btn');
-        const noteBtn = document.getElementById('note-btn');
-        const closeNoteBtn = document.getElementById('close-note');
-
-        settingsBtn?.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const nextVisible = settingsPanel?.style.display !== 'block';
-            closeFloatingPanels();
-            if (settingsPanel && nextVisible) {
-                settingsPanel.style.display = 'block';
-            }
-        });
-        noteBtn?.addEventListener('click', () => {
-            closeFloatingPanels();
-            if (notesPanel) notesPanel.style.display = 'flex';
-            if (overlay) overlay.style.display = 'block';
-        });
-        closeNoteBtn?.addEventListener('click', closeFloatingPanels);
-        overlay?.addEventListener('click', closeFloatingPanels);
-        document.querySelectorAll('.settings-option[data-size]').forEach((button) => {
-            button.addEventListener('click', () => {
-                document.documentElement.className = `font-${button.dataset.size || 'normal'}`;
-                document.querySelectorAll('.settings-option[data-size]').forEach((item) => item.classList.remove('active'));
-                button.classList.add('active');
-            });
-        });
-        document.querySelectorAll('.settings-option[data-mode]').forEach((button) => {
-            button.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode', button.dataset.mode === 'dark');
-                document.querySelectorAll('.settings-option[data-mode]').forEach((item) => item.classList.remove('active'));
-                button.classList.add('active');
-            });
-        });
-    }
-
-    function positionSelectionToolbar(rect) {
-        const toolbar = document.getElementById('selbar');
-        if (!toolbar) return;
-        toolbar.style.display = 'flex';
-        global.requestAnimationFrame(() => {
-            const top = global.scrollY + rect.top - toolbar.offsetHeight - 8;
-            const left = global.scrollX + rect.left + (rect.width / 2) - (toolbar.offsetWidth / 2);
-            toolbar.style.top = `${top > 0 ? top : global.scrollY + rect.bottom + 8}px`;
-            toolbar.style.left = `${Math.max(8, left)}px`;
-        });
-    }
-
-    function updateSelectionToolbar() {
-        const toolbar = document.getElementById('selbar');
-        if (!toolbar) return;
-        const selection = global.getSelection();
-        if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-            if (!interaction.keepToolbar && !interaction.currentHighlightNode) {
-                toolbar.style.display = 'none';
-                interaction.currentHighlightNode = null;
-            }
-            return;
-        }
-        const range = selection.getRangeAt(0);
-        let container = range.commonAncestorContainer;
-        if (container.nodeType === Node.TEXT_NODE) {
-            container = container.parentElement;
-        }
-        const leftPane = dom.left;
-        const rightPane = document.getElementById('right');
-        const isInAllowedPane = (leftPane && leftPane.contains(container)) || (rightPane && rightPane.contains(container));
-        const highlightNode = container instanceof HTMLElement
-            ? (container.matches('.hl') ? container : container.closest('.hl'))
-            : null;
-        if (!isInAllowedPane && !highlightNode) {
-            toolbar.style.display = 'none';
-            return;
-        }
-        interaction.lastRange = range.cloneRange();
-        interaction.currentHighlightNode = highlightNode || null;
-        positionSelectionToolbar(range.getBoundingClientRect());
-    }
-
-    function applySelectionHighlight(kind = 'highlight') {
-        const toolbar = document.getElementById('selbar');
-        const selection = global.getSelection();
-        if (!interaction.lastRange || interaction.lastRange.collapsed || interaction.currentHighlightNode) {
-            return;
-        }
-        const span = document.createElement('span');
-        span.className = 'hl';
-        if (kind === 'note') {
-            span.dataset.hlType = 'note';
-        }
-        try {
-            interaction.lastRange.surroundContents(span);
-        } catch (_) {
-            return;
-        }
-        selection?.removeAllRanges();
-        if (toolbar) toolbar.style.display = 'none';
-        interaction.lastRange = null;
-        interaction.currentHighlightNode = null;
-        syncSimulationDraftSnapshot('highlight');
-    }
-
-    function removeSelectionHighlight() {
-        const toolbar = document.getElementById('selbar');
-        const selection = global.getSelection();
-        let target = interaction.currentHighlightNode;
-        if (!target && interaction.lastRange) {
-            const ancestor = interaction.lastRange.commonAncestorContainer;
-            target = ancestor.nodeType === Node.TEXT_NODE
-                ? ancestor.parentElement?.closest('.hl')
-                : ancestor.closest?.('.hl');
-        }
-        if (target && target.parentNode) {
-            const parent = target.parentNode;
-            while (target.firstChild) {
-                parent.insertBefore(target.firstChild, target);
-            }
-            parent.removeChild(target);
-            parent.normalize();
-        }
-        selection?.removeAllRanges();
-        if (toolbar) toolbar.style.display = 'none';
-        interaction.lastRange = null;
-        interaction.currentHighlightNode = null;
-        syncSimulationDraftSnapshot('unhighlight');
-    }
-
-    function attachSelectionHighlightToolbar() {
-        const toolbar = document.getElementById('selbar');
-        if (!toolbar) return;
-        document.addEventListener('selectionchange', () => {
-            global.setTimeout(updateSelectionToolbar, 10);
-        });
-        toolbar.addEventListener('mousedown', () => {
-            interaction.keepToolbar = true;
-        });
-        toolbar.addEventListener('mouseup', () => {
-            interaction.keepToolbar = false;
-        });
-        document.getElementById('btnHL')?.addEventListener('click', () => applySelectionHighlight('highlight'));
-        document.getElementById('btnNote')?.addEventListener('click', () => applySelectionHighlight('note'));
-        document.getElementById('btnUH')?.addEventListener('click', removeSelectionHighlight);
     }
 
     function decodeParam(value) {
@@ -2877,7 +2729,6 @@
 
         attachUnifiedTimer();
         attachUnifiedPanels();
-        attachSelectionHighlightToolbar();
         attachActionListeners();
         attachMessageBridge();
         attachPracticeTimerBridge();
