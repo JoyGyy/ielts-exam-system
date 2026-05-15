@@ -10,7 +10,7 @@
       "title": "The Music of Salvatore Sciarrino",
       "category": "P4",
       "frequency": "high",
-      "audioSrc": "/assets/listening/audio/listening-p4-high-93.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p4-high-93.mp3",
       "localStorageKey": "ielts_sciarrino_31_40"
 },
     "questionList": ["31","32","33","34","35","36","37","38","39","40"],

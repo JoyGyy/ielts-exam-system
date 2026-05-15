@@ -10,7 +10,7 @@
       "title": "International Week Celebration",
       "category": "P2",
       "frequency": "mid",
-      "audioSrc": "/assets/listening/audio/listening-p2-mid-40.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p2-mid-40.mp3",
       "localStorageKey": "ieltsListening_InternationalWeek_v1"
 },
     "questionList": ["11","12","13","14","15","16","17","18","19","20"],

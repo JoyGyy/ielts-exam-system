@@ -10,7 +10,7 @@
       "title": "Outdoor Activities",
       "category": "P3",
       "frequency": "high",
-      "audioSrc": "/assets/listening/audio/listening-p3-high-85.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p3-high-85.mp3",
       "localStorageKey": "ielts_outdoor_85"
 },
     "questionList": ["21-22","23-24","25-26","27","28","29","30"],

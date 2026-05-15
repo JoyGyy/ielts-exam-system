@@ -10,7 +10,7 @@
       "title": "Organising a debate",
       "category": "P3",
       "frequency": "mid",
-      "audioSrc": "/assets/listening/audio/listening-p3-mid-82.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p3-mid-82.mp3",
       "localStorageKey": "ielts_listening_debate"
 },
     "questionList": ["21","22","23","24","25","26","27","28","29","30"],

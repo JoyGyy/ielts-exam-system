@@ -10,7 +10,7 @@
       "title": "Holiday on Jackson Island",
       "category": "P1",
       "frequency": "high",
-      "audioSrc": "/assets/listening/audio/listening-p1-high-61.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p1-high-61.mp3",
       "localStorageKey": "ieltsListening_jackson_island_v1"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],
