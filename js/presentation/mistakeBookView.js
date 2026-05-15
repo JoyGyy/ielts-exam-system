@@ -172,7 +172,16 @@ const MistakeBookView = (function () {
                         if (item.frequency) html += '<div class="mistake-detail-row"><span class="label">频率:</span> ' + escapeHtml(item.frequency) + '</div>';
                         html += '<div class="mistake-detail-row"><span class="label">做题时间:</span> ' + formatDate(item.date) + '</div>';
                         html += '<div class="mistake-detail-row"><span class="label">收录时间:</span> ' + formatDate(item.createdAt) + '</div>';
+                        if (item.redoCount) {
+                            var redoIcon = item.lastRedoResult === 'correct' ? '&#10003;' : '&#10007;';
+                            var redoClass = item.lastRedoResult === 'correct' ? 'redo-success' : 'redo-fail';
+                            html += '<div class="mistake-detail-row"><span class="label">重做:</span> <span class="mistake-redo-status ' + redoClass + '">重做 ' + item.redoCount + '次 ' + redoIcon + '</span></div>';
+                        }
+                        html += '<div class="mistake-question-preview" id="question-preview-' + safeId + '">';
+                        html += '<div class="mistake-question-loading">加载题目中...</div>';
+                        html += '</div>';
                         html += '<div class="mistake-detail-actions">';
+                        html += '<button class="mistake-action-btn redo-btn" onclick="window.openRedoModal(\'' + safeId + '\', \'' + escapeHtml(item.examId) + '\', \'' + escapeHtml(item.questionId) + '\', \'' + escapeHtml(item.type) + '\')">重做此题</button>';
                         html += '<button class="mistake-action-btn master-btn" onclick="window.toggleMistakeMastered(\'' + safeId + '\')">' + (item.mastered ? '取消掌握' : '标记已掌握') + '</button>';
                         html += '<button class="mistake-action-btn delete-btn" onclick="window.removeMistake(\'' + safeId + '\')">删除</button>';
                         html += '</div>';
@@ -196,6 +205,58 @@ const MistakeBookView = (function () {
         }
 
         container.innerHTML = html;
+
+        var previewIds = [];
+        for (var pi = 0; pi < filteredGroups.length; pi++) {
+            var pg = filteredGroups[pi];
+            var pgExpanded = getExpandedGroups()[pg.examId] !== false;
+            if (!pgExpanded) continue;
+            for (var pj = 0; pj < pg.mistakes.length; pj++) {
+                var pm = pg.mistakes[pj];
+                if (getExpandedMistakes()[pm.id]) {
+                    previewIds.push({ id: pm.id, examId: pm.examId, questionId: pm.questionId, type: pm.type });
+                }
+            }
+        }
+        previewIds.forEach(function (item) {
+            loadQuestionPreview(item.id, item.examId, item.questionId, item.type);
+        });
+    }
+
+    function loadQuestionPreview(mistakeId, examId, questionId, type) {
+        var containerId = 'question-preview-' + mistakeId.replace(/'/g, "\\'");
+        var container = document.getElementById(containerId);
+        if (!container) return;
+
+        try {
+            var data = null;
+            if (type === 'reading') {
+                data = QuestionExtractor.extractReadingQuestion(examId, questionId);
+            } else {
+                data = QuestionExtractor.extractListeningQuestion(examId, questionId);
+            }
+
+            if (!data) {
+                container.innerHTML = '<div class="mistake-question-unavailable">无法加载题目原文（考试数据未注册）</div>';
+                return;
+            }
+
+            if (type === 'reading') {
+                container.innerHTML = '<div class="redo-reading-layout readonly">' +
+                    '<div class="redo-passage">' + data.passageHtml + '</div>' +
+                    '<div class="redo-question-area">' + data.questionHtml + '</div>' +
+                    '</div>';
+            } else {
+                var audioHtml = data.audioSrc ? '<div class="redo-audio-player"><audio controls src="' + escapeHtml(data.audioSrc) + '" preload="metadata"></audio></div>' : '';
+                container.innerHTML = audioHtml + '<div class="redo-question-area">' + data.questionHtml + '</div>';
+            }
+
+            container.querySelectorAll('input, textarea, select').forEach(function (el) {
+                el.disabled = true;
+            });
+        } catch (e) {
+            container.innerHTML = '<div class="mistake-question-unavailable">加载题目时出错</div>';
+        }
     }
 
     function updateFilterButtons(activeType) {
