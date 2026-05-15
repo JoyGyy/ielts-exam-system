@@ -17,6 +17,15 @@
 @import url('animations/transitions.css');
 @import url('animations/keyframes.css');
 
+/* 视图切换 */
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
 /* 页面头部 */
 .page-header {
     margin-bottom: var(--space-8);
