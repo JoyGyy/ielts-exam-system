@@ -118,15 +118,15 @@ function resetBrowseViewToAll() {
                 window.ExamActions.resetBrowseViewToAll();
             } else {
                 // 降级：重置状态并重新加载
-                if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'all');
+                if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'reading');
                 loadExamList();
             }
         }).catch(function () {
-            if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'all');
+            if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'reading');
             loadExamList();
         });
     } else {
-        if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'all');
+        if (typeof setBrowseFilterState === 'function') setBrowseFilterState('all', 'reading');
         loadExamList();
     }
 }
@@ -567,7 +567,7 @@ function applyBrowseFilter(category = 'all', type = null, filterMode = null, pat
         }
     } catch (e) {
         console.warn('[Browse] 应用筛选失败，回退到默认列表:', e);
-        setBrowseFilterState('all', 'all');
+        setBrowseFilterState('all', 'reading');
         if (window.browseController && typeof window.browseController.resetToDefault === 'function') {
             window.browseController.resetToDefault();
         }
@@ -593,8 +593,8 @@ function initializeBrowseView() {
         setBrowseFilterState(persisted.category, persisted.type);
         setBrowseTitle(formatBrowseTitle(persisted.category, persisted.type));
     } else {
-        setBrowseFilterState('all', 'all');
-        setBrowseTitle(formatBrowseTitle('all', 'all'));
+        setBrowseFilterState('all', 'reading');
+        setBrowseTitle(formatBrowseTitle('all', 'reading'));
     }
 
     ensurePracticeRecordsSync('browse-view').then(() => {

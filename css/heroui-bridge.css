@@ -350,10 +350,10 @@ body.hero-body {
 
 .shui-segmented-btn.active,
 .shui-segmented-btn[aria-pressed="true"] {
-    color: #3730A3;
-    background: #ffffff;
-    border-color: #E5E1DB;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    color: #fff;
+    background: var(--color-gradient-primary);
+    border-color: transparent;
+    box-shadow: var(--shadow-glow);
     font-weight: 600;
 }
 

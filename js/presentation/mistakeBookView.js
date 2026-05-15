@@ -1,7 +1,7 @@
 'use strict';
 
 const MistakeBookView = (function () {
-    var currentFilter = 'all';
+    var currentFilter = 'reading';
     var currentSearch = '';
     var currentSort = 'date-desc';
 
@@ -290,7 +290,7 @@ const MistakeBookView = (function () {
         },
 
         init: function () {
-            currentFilter = 'all';
+            currentFilter = 'reading';
             currentSearch = '';
             currentSort = 'date-desc';
             window._mistakeExpandedGroups = {};

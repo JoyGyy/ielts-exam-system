@@ -68,8 +68,7 @@
                             <button type="button" class="search-clear" id="search-clear-btn" aria-label="清除搜索" hidden onclick="clearSearch()">×</button>
                         </div>
                         <div id="type-filter-buttons" class="segmented-control">
-                            <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="all" onclick="filterByType('all')">全部</button>
-                            <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="reading" onclick="filterByType('reading')">阅读</button>
+                            <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="reading" onclick="filterByType('reading')">阅读</button>
                             <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="listening" onclick="filterByType('listening')">听力</button>
                         </div>
                         <div class="browse-sort-wrapper">
@@ -101,8 +100,7 @@
                             <input type="text" class="search-input" placeholder="搜索题目..." id="mistake-search-input" aria-label="搜索错题" onkeyup="searchMistakes(this.value)">
                         </div>
                         <div id="mistakes-type-filter" class="segmented-control">
-                            <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="all" onclick="filterMistakesByType('all')">全部</button>
-                            <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="reading" onclick="filterMistakesByType('reading')">阅读</button>
+                            <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="reading" onclick="filterMistakesByType('reading')">阅读</button>
                             <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="listening" onclick="filterMistakesByType('listening')">听力</button>
                         </div>
                         <div class="filter-actions">
@@ -170,6 +168,8 @@
         <script src="js/data/repositories/metaRepository.js"></script>
         <script src="js/data/index.js"></script>
         <script src="js/data/mistakeBook.js"></script>
+        <script src="js/runtime/examPages/readingExamRegistry.js"></script>
+        <script src="js/runtime/examPages/listeningExamRegistry.js"></script>
         <script src="js/utils/questionExtractor.js"></script>
         <script type="module" src="js/core/practiceCore.js"></script>
         <script src="js/core/resourceCore.js"></script>

@@ -23,11 +23,10 @@
      * - 数据驱动：所有按钮和筛选逻辑由配置决定
      */
     const BROWSE_MODES = {
-        // 默认模式：全部/阅读/听力
+        // 默认模式：阅读/听力
         'default': {
             id: 'default',
             filters: [
-                { id: 'all', label: '全部', type: 'all' },
                 { id: 'reading', label: '阅读', type: 'reading' },
                 { id: 'listening', label: '听力', type: 'listening' }
             ],
@@ -79,7 +78,7 @@
     class BrowseController {
         constructor() {
             this.currentMode = 'default';
-            this.activeFilter = 'all';
+            this.activeFilter = 'reading';
             this.buttonContainer = null;
         }
 
@@ -114,7 +113,7 @@
             }
 
             this.currentMode = mode;
-            this.activeFilter = 'all'; // 重置为默认筛选
+            this.activeFilter = 'reading'; // 重置为默认筛选
 
             // 保存到全局状态
             this.saveMode();
