@@ -69,28 +69,6 @@ const navigationMixin = {
                     window.initializeBrowseView();
                 }
                 break;
-            case 'practice':
-                console.log('[App] 练习视图已激活，开始加载练习记录模块');
-                Promise.resolve()
-                    .then(() => {
-                        if (typeof window.ensureBrowseGroup === 'function') {
-                            return window.ensureBrowseGroup();
-                        }
-                        return null;
-                    })
-                    .then(() => {
-                        if (typeof window.syncPracticeRecords === 'function') {
-                            return window.syncPracticeRecords();
-                        }
-                        if (typeof window.updatePracticeView === 'function') {
-                            window.updatePracticeView();
-                        }
-                        return null;
-                    })
-                    .catch((error) => {
-                        console.error('[App] 激活练习视图失败:', error);
-                    });
-                break;
             case 'mistakes':
                 if (typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.init === 'function') {
                     window.MistakeBookView.init();

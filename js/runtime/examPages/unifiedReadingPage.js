@@ -1640,7 +1640,7 @@
             }
             dom.submitBtn.disabled = state.readOnly;
             if (state.readOnly) {
-                dom.submitBtn.textContent = '回顾模式';
+                dom.submitBtn.textContent = '查看答案';
             } else {
                 dom.submitBtn.textContent = dom.submitBtn.dataset.defaultLabel;
             }
@@ -1678,7 +1678,7 @@
         setTimerRunning(false);
         if (dom.submitBtn) {
             dom.submitBtn.disabled = false;
-            dom.submitBtn.textContent = '回顾模式';
+            dom.submitBtn.textContent = '查看答案';
         }
         if (dom.resetBtn) {
             dom.resetBtn.disabled = false;
@@ -2360,7 +2360,6 @@
     }
     async function handleSubmit() {
         if (state.submitted) {
-            toggleReviewMode();
             return;
         }
         if (state.readOnly) {
@@ -2419,35 +2418,9 @@
         enterSubmittedReadOnlyState(state.simulationMode ? 'simulation-final-submit' : 'final-submit');
     }
 
-    let reviewModeActive = false;
-
-    function toggleReviewMode() {
-        reviewModeActive = !reviewModeActive;
-        if (reviewModeActive) {
-            document.body.classList.remove('review-readonly-mode');
-            const controls = document.querySelectorAll('input, textarea, select');
-            controls.forEach((control) => {
-                if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement) {
-                    control.disabled = false;
-                }
-            });
-            if (dom.submitBtn) dom.submitBtn.textContent = '退出回顾';
-        } else {
-            document.body.classList.add('review-readonly-mode');
-            const controls = document.querySelectorAll('input, textarea, select');
-            controls.forEach((control) => {
-                if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement) {
-                    control.disabled = true;
-                }
-            });
-            if (dom.submitBtn) dom.submitBtn.textContent = '回顾模式';
-        }
-    }
-
     function handleReset() {
         if (state.readOnly || state.submitted) {
             if (state.submitted) {
-                reviewModeActive = false;
                 state.submitted = false;
                 state.readOnly = false;
                 document.body.classList.remove('review-readonly-mode');

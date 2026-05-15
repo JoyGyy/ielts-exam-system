@@ -730,10 +730,35 @@
         stopTimer();
         if (dom.audio) dom.audio.pause();
         if (dom.submitBtn) dom.submitBtn.disabled = true;
-        // Disable inputs
         document.querySelectorAll('input, select').forEach(el => {
             el.disabled = true;
         });
+        setExitButtonVisible(true);
+    }
+
+    function setExitButtonVisible(visible) {
+        if (!dom.exitBtn) return;
+        dom.exitBtn.style.display = visible ? 'block' : 'none';
+    }
+
+    function handleExitClick() {
+        var opener = global.opener && !global.opener.closed ? global.opener : null;
+        var hasEndlessMarker = /(?:^|[?&])endless(?:=|&|$)/i.test(global.location.search || '')
+            || document.body?.dataset?.endlessMode === 'true'
+            || global.__ENDLESS_PRACTICE_MODE__ === true;
+        if (hasEndlessMarker && opener) {
+            try {
+                opener.postMessage({ type: 'ENDLESS_USER_EXIT' }, '*');
+                if (typeof opener.stopEndlessPractice === 'function') {
+                    opener.stopEndlessPractice();
+                } else if (opener.AppActions && typeof opener.AppActions.stopEndlessPractice === 'function') {
+                    opener.AppActions.stopEndlessPractice();
+                }
+            } catch (_) {}
+        }
+        try {
+            global.close();
+        } catch (_) {}
     }
 
     function handleReset() {
@@ -833,6 +858,7 @@
 
         dom.submitBtn?.addEventListener('click', handleSubmit);
         dom.resetBtn?.addEventListener('click', handleReset);
+        dom.exitBtn?.addEventListener('click', handleExitClick);
 
         startTimer();
         sendSessionReady();

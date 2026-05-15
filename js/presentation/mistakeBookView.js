@@ -3,6 +3,11 @@
 const MistakeBookView = (function () {
     var currentFilter = 'all';
     var currentSearch = '';
+    var currentSort = 'date-desc';
+
+    function getExpandedGroups() { return window._mistakeExpandedGroups || (window._mistakeExpandedGroups = {}); }
+    function getExpandedMistakes() { return window._mistakeExpandedMistakes || (window._mistakeExpandedMistakes = {}); }
+    function getSelectedMistakes() { return window._mistakeSelected || (window._mistakeSelected = {}); }
 
     function escapeHtml(str) {
         if (!str) return '';
@@ -18,7 +23,9 @@ const MistakeBookView = (function () {
         var d = new Date(dateStr);
         var m = d.getMonth() + 1;
         var day = d.getDate();
-        return m + '/' + day;
+        var h = d.getHours();
+        var min = d.getMinutes();
+        return m + '/' + day + ' ' + String(h).padStart(2, '0') + ':' + String(min).padStart(2, '0');
     }
 
     function getTypeLabel(type) {
@@ -36,19 +43,29 @@ const MistakeBookView = (function () {
             var q = currentSearch.toLowerCase();
             result = result.filter(function (m) {
                 return (m.title && m.title.toLowerCase().indexOf(q) !== -1) ||
-                       (m.questionId && m.questionId.toLowerCase().indexOf(q) !== -1);
+                       (m.questionId && m.questionId.toLowerCase().indexOf(q) !== -1) ||
+                       (m.userAnswer && m.userAnswer.toLowerCase().indexOf(q) !== -1) ||
+                       (m.correctAnswer && m.correctAnswer.toLowerCase().indexOf(q) !== -1);
             });
         }
         return result;
     }
 
+    function sortMistakes(mistakes) {
+        var sorted = mistakes.slice();
+        if (currentSort === 'date-desc') {
+            sorted.sort(function (a, b) { return new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt); });
+        } else if (currentSort === 'date-asc') {
+            sorted.sort(function (a, b) { return new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt); });
+        }
+        return sorted;
+    }
+
     function renderStats() {
         var stats = MistakeBook.getStats();
-
         var totalEl = document.getElementById('mistake-total');
         var masteredEl = document.getElementById('mistake-mastered');
         var unmasteredEl = document.getElementById('mistake-unmastered');
-
         if (totalEl) totalEl.textContent = stats.total;
         if (masteredEl) masteredEl.textContent = stats.mastered;
         if (unmasteredEl) unmasteredEl.textContent = stats.unmastered;
@@ -60,56 +77,121 @@ const MistakeBookView = (function () {
 
         var mistakes = MistakeBook.getMistakes();
         var filtered = filterMistakes(mistakes);
+        filtered = sortMistakes(filtered);
 
         if (filtered.length === 0) {
-            var emptyMsg = mistakes.length === 0
-                ? '暂无错题'
-                : '没有匹配的错题';
+            var emptyMsg = mistakes.length === 0 ? '暂无错题' : '没有匹配的错题';
             var emptyHint = mistakes.length === 0
                 ? '完成练习后，答错的题目会自动收录到这里'
                 : '试试调整筛选条件或搜索关键词';
+            var browseLink = mistakes.length === 0
+                ? '<a href="javascript:void(0)" onclick="window.AppActions && window.AppActions.navigateBrowse && window.AppActions.navigateBrowse()" class="mistake-empty-link">去题库练习</a>'
+                : '';
             container.innerHTML =
                 '<div class="mistake-empty">' +
-                    '<div class="mistake-empty-icon">📝</div>' +
+                    '<div class="mistake-empty-icon">&#128221;</div>' +
                     '<p>' + escapeHtml(emptyMsg) + '</p>' +
                     '<p class="mistake-empty-hint">' + escapeHtml(emptyHint) + '</p>' +
+                    browseLink +
                 '</div>';
             return;
         }
 
-        var html = '';
-        for (var i = 0; i < filtered.length; i++) {
-            var m = filtered[i];
-            var masteredClass = m.mastered ? ' mastered' : '';
-            var typeClass = m.type === 'reading' ? ' type-reading' : ' type-listening';
+        var groups = MistakeBook.getMistakesGroupedByExam();
+        var filteredGroups = [];
+        for (var g = 0; g < groups.length; g++) {
+            var group = groups[g];
+            var groupFiltered = group.mistakes.filter(function (m) {
+                if (currentFilter !== 'all' && m.type !== currentFilter) return false;
+                if (currentSearch) {
+                    var q = currentSearch.toLowerCase();
+                    if ((m.title && m.title.toLowerCase().indexOf(q) !== -1) ||
+                        (m.questionId && m.questionId.toLowerCase().indexOf(q) !== -1) ||
+                        (m.userAnswer && m.userAnswer.toLowerCase().indexOf(q) !== -1) ||
+                        (m.correctAnswer && m.correctAnswer.toLowerCase().indexOf(q) !== -1)) return true;
+                    return false;
+                }
+                return true;
+            });
+            if (groupFiltered.length > 0) {
+                filteredGroups.push({ examId: group.examId, title: group.title, mistakes: sortMistakes(groupFiltered) });
+            }
+        }
 
-            html += '<div class="mistake-item' + masteredClass + '" data-mistake-id="' + escapeHtml(m.id) + '">';
-            html += '<div class="mistake-header">';
-            html += '<span class="mistake-type-badge' + typeClass + '">' + getTypeLabel(m.type) + '</span>';
-            html += '<span class="mistake-title">' + escapeHtml(m.title) + '</span>';
-            html += '<span class="mistake-date">' + formatDate(m.date) + '</span>';
-            html += '</div>';
-            html += '<div class="mistake-body">';
-            html += '<div class="mistake-question-label">题号: ' + escapeHtml(m.questionId) + '</div>';
-            html += '<div class="mistake-answers">';
-            html += '<div class="mistake-answer wrong">你的答案: <strong>' + escapeHtml(m.userAnswer || '(无)') + '</strong></div>';
-            html += '<div class="mistake-answer correct">正确答案: <strong>' + escapeHtml(m.correctAnswer) + '</strong></div>';
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="mistake-footer">';
-            if (m.category) {
-                html += '<span class="mistake-meta">' + escapeHtml(m.category) + '</span>';
+        var html = '';
+        var selectedCount = Object.keys(getSelectedMistakes()).length;
+
+        for (var i = 0; i < filteredGroups.length; i++) {
+            var fg = filteredGroups[i];
+            var safeExamId = escapeHtml(fg.examId || 'unknown');
+            var groupExpanded = getExpandedGroups()[fg.examId] !== false;
+            var groupMasteredCount = 0;
+            for (var m = 0; m < fg.mistakes.length; m++) {
+                if (fg.mistakes[m].mastered) groupMasteredCount++;
             }
-            if (m.frequency) {
-                html += '<span class="mistake-meta">' + escapeHtml(m.frequency) + '</span>';
+
+            html += '<div class="mistake-group" data-exam-id="' + safeExamId + '">';
+            html += '<div class="mistake-group-header" onclick="window.toggleMistakeGroup(\'' + safeExamId + '\')">';
+            html += '<span class="mistake-group-arrow' + (groupExpanded ? ' expanded' : '') + '">&#9660;</span>';
+            html += '<label class="mistake-group-select" onclick="event.stopPropagation()">';
+            html += '<input type="checkbox" onchange="window.toggleGroupSelect(\'' + safeExamId + '\', this.checked)" />';
+            html += '</label>';
+            html += '<span class="mistake-group-title">' + escapeHtml(fg.title) + '</span>';
+            html += '<span class="mistake-group-count">' + fg.mistakes.length + '题 &middot; ' + groupMasteredCount + '已掌握</span>';
+            html += '</div>';
+
+            if (groupExpanded) {
+                html += '<div class="mistake-group-body">';
+                for (var j = 0; j < fg.mistakes.length; j++) {
+                    var item = fg.mistakes[j];
+                    var masteredClass = item.mastered ? ' mastered' : '';
+                    var typeClass = item.type === 'reading' ? ' type-reading' : ' type-listening';
+                    var safeId = item.id.replace(/'/g, "\\'");
+                    var isSelected = getSelectedMistakes()[item.id];
+                    var isExpanded = getExpandedMistakes()[item.id];
+
+                    html += '<div class="mistake-item' + masteredClass + (isSelected ? ' selected' : '') + '" data-mistake-id="' + escapeHtml(item.id) + '">';
+                    html += '<div class="mistake-item-row" onclick="window.toggleMistakeExpand(\'' + safeId + '\')">';
+                    html += '<label class="mistake-item-select" onclick="event.stopPropagation()">';
+                    html += '<input type="checkbox"' + (isSelected ? ' checked' : '') + ' onchange="window.toggleMistakeSelect(\'' + safeId + '\', this.checked)" />';
+                    html += '</label>';
+                    html += '<span class="mistake-type-badge' + typeClass + '">' + getTypeLabel(item.type) + '</span>';
+                    html += '<span class="mistake-question-id">' + escapeHtml(item.questionId) + '</span>';
+                    html += '<span class="mistake-answers-inline">';
+                    html += '<span class="wrong">' + escapeHtml(item.userAnswer || '(无)') + '</span>';
+                    html += ' &rarr; ';
+                    html += '<span class="correct">' + escapeHtml(item.correctAnswer) + '</span>';
+                    html += '</span>';
+                    html += '<span class="mistake-date">' + formatDate(item.date) + '</span>';
+                    html += '<span class="mistake-expand-arrow' + (isExpanded ? ' expanded' : '') + '">&#9660;</span>';
+                    html += '</div>';
+
+                    if (isExpanded) {
+                        html += '<div class="mistake-detail">';
+                        if (item.category) html += '<div class="mistake-detail-row"><span class="label">类别:</span> ' + escapeHtml(item.category) + '</div>';
+                        if (item.frequency) html += '<div class="mistake-detail-row"><span class="label">频率:</span> ' + escapeHtml(item.frequency) + '</div>';
+                        html += '<div class="mistake-detail-row"><span class="label">做题时间:</span> ' + formatDate(item.date) + '</div>';
+                        html += '<div class="mistake-detail-row"><span class="label">收录时间:</span> ' + formatDate(item.createdAt) + '</div>';
+                        html += '<div class="mistake-detail-actions">';
+                        html += '<button class="mistake-action-btn master-btn" onclick="window.toggleMistakeMastered(\'' + safeId + '\')">' + (item.mastered ? '取消掌握' : '标记已掌握') + '</button>';
+                        html += '<button class="mistake-action-btn delete-btn" onclick="window.removeMistake(\'' + safeId + '\')">删除</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
             }
-            html += '<div class="mistake-actions">';
-            var masterLabel = m.mastered ? '取消掌握' : '已掌握';
-            var safeId = m.id.replace(/'/g, "\\'");
-            html += '<button class="mistake-action-btn master-btn" onclick="window.toggleMistakeMastered(\'' + safeId + '\')">' + masterLabel + '</button>';
-            html += '<button class="mistake-action-btn delete-btn" onclick="window.removeMistake(\'' + safeId + '\')">删除</button>';
             html += '</div>';
-            html += '</div>';
+        }
+
+        if (selectedCount > 0) {
+            html += '<div class="mistake-batch-bar">';
+            html += '<span class="mistake-batch-count">已选 ' + selectedCount + ' 项</span>';
+            html += '<button class="mistake-action-btn master-btn" onclick="window.batchMarkMastered(true)">批量标记已掌握</button>';
+            html += '<button class="mistake-action-btn master-btn" onclick="window.batchMarkMastered(false)">批量取消掌握</button>';
+            html += '<button class="mistake-action-btn delete-btn" onclick="window.batchDeleteMistakes()">批量删除</button>';
+            html += '<button class="mistake-action-btn" onclick="window.clearMistakeSelection()">取消选择</button>';
             html += '</div>';
         }
 
@@ -142,14 +224,23 @@ const MistakeBookView = (function () {
             renderList();
         },
 
+        setSort: function (sort) {
+            currentSort = sort;
+            renderList();
+        },
+
         init: function () {
             currentFilter = 'all';
             currentSearch = '';
+            currentSort = 'date-desc';
+            window._mistakeExpandedGroups = {};
+            window._mistakeExpandedMistakes = {};
+            window._mistakeSelected = {};
 
             var searchInput = document.getElementById('mistake-search-input');
-            if (searchInput) {
-                searchInput.value = '';
-            }
+            if (searchInput) searchInput.value = '';
+            var sortSelect = document.getElementById('mistake-sort-select');
+            if (sortSelect) sortSelect.value = 'date-desc';
 
             this.render();
         }
@@ -187,4 +278,80 @@ window.clearMistakeSearch = function () {
     MistakeBookView.setSearch('');
     var input = document.getElementById('mistake-search-input');
     if (input) input.value = '';
+};
+
+window.sortMistakes = function (sort) {
+    MistakeBookView.setSort(sort);
+};
+
+window.toggleMistakeGroup = function (examId) {
+    var expanded = window._mistakeExpandedGroups || (window._mistakeExpandedGroups = {});
+    expanded[examId] = expanded[examId] === false ? true : false;
+    MistakeBookView.render();
+};
+
+window.toggleGroupSelect = function (examId, checked) {
+    var group = MistakeBook.getMistakesByExam(examId);
+    var selected = window._mistakeSelected || (window._mistakeSelected = {});
+    for (var i = 0; i < group.length; i++) {
+        if (checked) {
+            selected[group[i].id] = true;
+        } else {
+            delete selected[group[i].id];
+        }
+    }
+    MistakeBookView.render();
+};
+
+window.toggleMistakeExpand = function (id) {
+    var expanded = window._mistakeExpandedMistakes || (window._mistakeExpandedMistakes = {});
+    expanded[id] = !expanded[id];
+    MistakeBookView.render();
+};
+
+window.toggleMistakeSelect = function (id, checked) {
+    var selected = window._mistakeSelected || (window._mistakeSelected = {});
+    if (checked) {
+        selected[id] = true;
+    } else {
+        delete selected[id];
+    }
+    MistakeBookView.render();
+};
+
+window.batchMarkMastered = function (mastered) {
+    var selected = window._mistakeSelected || {};
+    var ids = Object.keys(selected);
+    if (ids.length === 0) return;
+    MistakeBook.batchToggleMastered(ids, mastered);
+    window._mistakeSelected = {};
+    MistakeBookView.render();
+};
+
+window.batchDeleteMistakes = function () {
+    var selected = window._mistakeSelected || {};
+    var ids = Object.keys(selected);
+    if (ids.length === 0) return;
+    if (!confirm('确定要删除选中的 ' + ids.length + ' 条错题吗？')) return;
+    MistakeBook.batchRemove(ids);
+    window._mistakeSelected = {};
+    MistakeBookView.render();
+};
+
+window.clearMistakeSelection = function () {
+    window._mistakeSelected = {};
+    MistakeBookView.render();
+};
+
+window.exportMistakeBook = function () {
+    var data = MistakeBook.exportMistakes();
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mistake-book-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 };

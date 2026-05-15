@@ -27,6 +27,111 @@ const MistakeBook = (function () {
             return readAll();
         },
 
+        getMistakesGroupedByExam: function () {
+            var list = readAll();
+            var groups = {};
+            var order = [];
+            for (var i = 0; i < list.length; i++) {
+                var m = list[i];
+                var key = m.examId || 'unknown';
+                if (!groups[key]) {
+                    groups[key] = { examId: m.examId, title: m.title || '未知考试', mistakes: [] };
+                    order.push(key);
+                }
+                groups[key].mistakes.push(m);
+            }
+            var result = [];
+            for (var j = 0; j < order.length; j++) {
+                result.push(groups[order[j]]);
+            }
+            return result;
+        },
+
+        getMistakesByExam: function (examId) {
+            var list = readAll();
+            var result = [];
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].examId === examId) {
+                    result.push(list[i]);
+                }
+            }
+            return result;
+        },
+
+        getMistakeStats: function () {
+            var list = readAll();
+            var total = list.length;
+            var mastered = 0;
+            var reading = 0;
+            var listening = 0;
+            var byExam = {};
+
+            for (var i = 0; i < total; i++) {
+                if (list[i].mastered) mastered++;
+                if (list[i].type === 'reading') reading++;
+                if (list[i].type === 'listening') listening++;
+                var examKey = list[i].examId || 'unknown';
+                if (!byExam[examKey]) {
+                    byExam[examKey] = { examId: list[i].examId, title: list[i].title || '未知考试', count: 0 };
+                }
+                byExam[examKey].count++;
+            }
+
+            var byExamList = [];
+            var examKeys = Object.keys(byExam);
+            for (var j = 0; j < examKeys.length; j++) {
+                byExamList.push(byExam[examKeys[j]]);
+            }
+
+            return {
+                total: total,
+                mastered: mastered,
+                unmastered: total - mastered,
+                reading: reading,
+                listening: listening,
+                byExam: byExamList
+            };
+        },
+
+        batchToggleMastered: function (ids, mastered) {
+            if (!Array.isArray(ids) || ids.length === 0) return 0;
+            var list = readAll();
+            var idSet = {};
+            for (var i = 0; i < ids.length; i++) {
+                idSet[ids[i]] = true;
+            }
+            var updated = 0;
+            for (var j = 0; j < list.length; j++) {
+                if (idSet[list[j].id] && list[j].mastered !== mastered) {
+                    list[j].mastered = mastered;
+                    list[j].updatedAt = new Date().toISOString();
+                    updated++;
+                }
+            }
+            if (updated > 0) writeAll(list);
+            return updated;
+        },
+
+        batchRemove: function (ids) {
+            if (!Array.isArray(ids) || ids.length === 0) return 0;
+            var idSet = {};
+            for (var i = 0; i < ids.length; i++) {
+                idSet[ids[i]] = true;
+            }
+            var list = readAll();
+            var before = list.length;
+            var filtered = list.filter(function (m) { return !idSet[m.id]; });
+            if (filtered.length < before) {
+                writeAll(filtered);
+                return before - filtered.length;
+            }
+            return 0;
+        },
+
+        exportMistakes: function () {
+            return JSON.stringify(readAll(), null, 2);
+        },
+
         addMistakesFromRecord: function (record) {
             if (!record) return 0;
             var list = readAll();

@@ -51,13 +51,6 @@
         var t = document.getElementById('browse-title'); if (t) t.textContent = '题库浏览';
       }
       if (normalized === 'browse' && typeof window.loadExamList === 'function') window.loadExamList();
-      if (normalized === 'practice' && typeof window.startPracticeRecordsSyncInBackground === 'function') {
-        window.startPracticeRecordsSyncInBackground('practice-view');
-      }
-      if (normalized === 'practice' && typeof window.ensurePracticeRecordsSync === 'function') {
-        window.ensurePracticeRecordsSync('practice-view').catch(function () { });
-      }
-      if (normalized === 'practice' && typeof window.updatePracticeView === 'function') window.updatePracticeView();
       if (normalized === 'mistakes' && typeof window.MistakeBookView !== 'undefined' && typeof window.MistakeBookView.init === 'function') window.MistakeBookView.init();
     };
   }
@@ -916,7 +909,7 @@
     };
   }
 
-  const VALID_INITIAL_VIEWS = ['browse', 'practice', 'mistakes'];
+  const VALID_INITIAL_VIEWS = ['browse', 'mistakes'];
 
   function readQueryView() {
     try {

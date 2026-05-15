@@ -21,6 +21,18 @@ import { preferredFirstExamByCategory } from '../shared/constants.js';
     const CUSTOM_SUITE_PANEL_MARGIN = 12;
     let customSuitePortalPosition = null;
 
+    function getPracticeCountForExam(examId) {
+        if (!examId || !global.practiceRecords) return 0;
+        var records = global.practiceRecords;
+        var count = 0;
+        for (var i = 0; i < records.length; i++) {
+            if (records[i] && String(records[i].examId) === String(examId)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     function normalizeExamSignature(value) {
         return String(value || '')
             .toLowerCase()
@@ -876,6 +888,13 @@ import { preferredFirstExamByCategory } from '../shared/constants.js';
         meta.textContent = metaText;
         infoContent.appendChild(title);
         infoContent.appendChild(meta);
+        var practiceCount = getPracticeCountForExam(exam.id);
+        if (practiceCount > 0) {
+            var badge = document.createElement('span');
+            badge.className = 'exam-practice-count';
+            badge.textContent = practiceCount + '次练习';
+            infoContent.appendChild(badge);
+        }
         info.appendChild(infoContent);
 
         if (isSelecting && currentCategory) {
