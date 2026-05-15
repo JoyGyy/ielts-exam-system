@@ -10,7 +10,7 @@
       "title": "Climate Change and Allergies",
       "category": "P3",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p3-mid-19.mp3",
+      "audioSrc": "/assets/listening/audio/listening-p3-mid-19.mp3",
       "localStorageKey": "ieltsListening_climate_v1"
 },
     "questionList": ["21","22","23","24","25","26","27","28","29","30"],

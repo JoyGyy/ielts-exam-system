@@ -10,7 +10,7 @@
       "title": "Film club",
       "category": "P1",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p1-mid-72.mp3",
+      "audioSrc": "/assets/listening/audio/listening-p1-mid-72.mp3",
       "localStorageKey": "ieltsListening_filmclub_v1"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],

@@ -10,7 +10,7 @@
       "title": "Dolphin Presentation",
       "category": "P3",
       "frequency": "high",
-      "audioSrc": "../../assets/listening/audio/listening-p3-high-86.mp3",
+      "audioSrc": "/assets/listening/audio/listening-p3-high-86.mp3",
       "localStorageKey": "ielts_dolphin_v1"
 },
     "questionList": ["21","22","23","24","25","26","27","28","29","30"],

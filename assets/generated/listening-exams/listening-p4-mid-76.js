@@ -10,7 +10,7 @@
       "title": "Impact of cars in Australia",
       "category": "P4",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p4-mid-76.mp3",
+      "audioSrc": "/assets/listening/audio/listening-p4-mid-76.mp3",
       "localStorageKey": "ieltsListening_enhanced_v6"
 },
     "questionList": ["31","32","33","34","35","36","37","38","39","40"],
