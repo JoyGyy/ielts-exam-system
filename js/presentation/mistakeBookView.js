@@ -404,6 +404,120 @@ window.clearMistakeSelection = function () {
     MistakeBookView.render();
 };
 
+window.openRedoModal = function (mistakeId, examId, questionId, type) {
+    var data = null;
+    if (type === 'reading') {
+        data = QuestionExtractor.extractReadingQuestion(examId, questionId);
+    } else {
+        data = QuestionExtractor.extractListeningQuestion(examId, questionId);
+    }
+
+    if (!data) {
+        alert('无法加载题目数据');
+        return;
+    }
+
+    var title = '';
+    try {
+        if (type === 'reading' && window.__READING_EXAM_DATA__ && window.__READING_EXAM_DATA__.has(examId)) {
+            var exam = window.__READING_EXAM_DATA__.get(examId);
+            title = (exam.meta && exam.meta.title) || examId;
+        } else if (type === 'listening' && window.__LISTENING_EXAM_DATA__ && window.__LISTENING_EXAM_DATA__.has(examId)) {
+            var exam2 = window.__LISTENING_EXAM_DATA__.get(examId);
+            title = (exam2.meta && exam2.meta.title) || examId;
+        }
+    } catch (_) {}
+
+    var overlay = document.createElement('div');
+    overlay.className = 'redo-modal-overlay';
+    overlay.id = 'redo-modal';
+
+    var modal = document.createElement('div');
+    modal.className = 'redo-modal';
+
+    var header = document.createElement('div');
+    header.className = 'redo-modal-header';
+    header.innerHTML = '<span class="redo-modal-title">' + escapeHtml(title) + ' &middot; ' + escapeHtml(questionId) + '</span>';
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'redo-modal-close';
+    closeBtn.innerHTML = '&#10005;';
+    closeBtn.onclick = function () { closeModal(); };
+    header.appendChild(closeBtn);
+    modal.appendChild(header);
+
+    var body = document.createElement('div');
+    body.className = 'redo-modal-body';
+    QuestionExtractor.renderQuestionInContainer(body, data, type);
+    modal.appendChild(body);
+
+    var footer = document.createElement('div');
+    footer.className = 'redo-modal-footer';
+    var submitBtn = document.createElement('button');
+    submitBtn.className = 'redo-modal-submit';
+    submitBtn.textContent = '提交答案';
+    submitBtn.onclick = function () {
+        var userAnswers = QuestionExtractor.collectUserAnswers(body, data.questionIds);
+        var comparison = {};
+        var allCorrect = true;
+        data.questionIds.forEach(function (qId) {
+            var correctAnswer = '';
+            if (type === 'listening') {
+                try {
+                    var examData = window.__LISTENING_EXAM_DATA__.get(examId);
+                    if (examData && examData.answerKey) {
+                        if (examData.answerKey.text && examData.answerKey.text[qId] !== undefined) {
+                            correctAnswer = String(examData.answerKey.text[qId]);
+                        } else if (examData.answerKey.single && examData.answerKey.single[qId] !== undefined) {
+                            correctAnswer = String(examData.answerKey.single[qId]);
+                        } else if (examData.answerKey.multiple && examData.answerKey.multiple[qId] !== undefined) {
+                            correctAnswer = String(examData.answerKey.multiple[qId]);
+                        }
+                    }
+                } catch (_) {}
+            } else {
+                try {
+                    var examData2 = window.__READING_EXAM_DATA__.get(examId);
+                    if (examData2 && examData2.answerKey && examData2.answerKey[qId] !== undefined) {
+                        correctAnswer = String(examData2.answerKey[qId]);
+                    }
+                } catch (_) {}
+            }
+            var result = QuestionExtractor.compareAnswers(userAnswers, correctAnswer, qId);
+            comparison[qId] = result;
+            if (!result.isCorrect) allCorrect = false;
+        });
+
+        QuestionExtractor.markResults(body, data.questionIds, comparison);
+
+        if (window.MistakeBook && window.MistakeBook.recordRedo) {
+            window.MistakeBook.recordRedo(mistakeId, allCorrect);
+        }
+
+        submitBtn.textContent = '关闭';
+        submitBtn.onclick = function () { closeModal(); };
+    };
+    footer.appendChild(submitBtn);
+    modal.appendChild(footer);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    function closeModal() {
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+        MistakeBookView.render();
+    }
+
+    function onEsc(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', onEsc);
+        }
+    }
+    document.addEventListener('keydown', onEsc);
+};
+
 window.exportMistakeBook = function () {
     var data = MistakeBook.exportMistakes();
     var blob = new Blob([data], { type: 'application/json' });
