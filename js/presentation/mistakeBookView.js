@@ -228,14 +228,13 @@ const MistakeBookView = (function () {
         var container = document.getElementById(containerId);
         if (!container) return;
 
-        try {
-            var data = null;
-            if (type === 'reading') {
-                data = QuestionExtractor.extractReadingQuestion(examId, questionId);
-            } else {
-                data = QuestionExtractor.extractListeningQuestion(examId, questionId);
-            }
+        container.innerHTML = '<div class="mistake-question-loading">加载中...</div>';
 
+        var extractor = type === 'reading'
+            ? QuestionExtractor.extractReadingQuestionAsync(examId, questionId)
+            : QuestionExtractor.extractListeningQuestionAsync(examId, questionId);
+
+        extractor.then(function (data) {
             if (!data) {
                 container.innerHTML = '<div class="mistake-question-unavailable">无法加载题目原文（考试数据未注册）</div>';
                 return;
@@ -254,9 +253,9 @@ const MistakeBookView = (function () {
             container.querySelectorAll('input, textarea, select').forEach(function (el) {
                 el.disabled = true;
             });
-        } catch (e) {
+        }).catch(function () {
             container.innerHTML = '<div class="mistake-question-unavailable">加载题目时出错</div>';
-        }
+        });
     }
 
     function updateFilterButtons(activeType) {
@@ -405,29 +404,6 @@ window.clearMistakeSelection = function () {
 };
 
 window.openRedoModal = function (mistakeId, examId, questionId, type) {
-    var data = null;
-    if (type === 'reading') {
-        data = QuestionExtractor.extractReadingQuestion(examId, questionId);
-    } else {
-        data = QuestionExtractor.extractListeningQuestion(examId, questionId);
-    }
-
-    if (!data) {
-        alert('无法加载题目数据');
-        return;
-    }
-
-    var title = '';
-    try {
-        if (type === 'reading' && window.__READING_EXAM_DATA__ && window.__READING_EXAM_DATA__.has(examId)) {
-            var exam = window.__READING_EXAM_DATA__.get(examId);
-            title = (exam.meta && exam.meta.title) || examId;
-        } else if (type === 'listening' && window.__LISTENING_EXAM_DATA__ && window.__LISTENING_EXAM_DATA__.has(examId)) {
-            var exam2 = window.__LISTENING_EXAM_DATA__.get(examId);
-            title = (exam2.meta && exam2.meta.title) || examId;
-        }
-    } catch (_) {}
-
     var overlay = document.createElement('div');
     overlay.className = 'redo-modal-overlay';
     overlay.id = 'redo-modal';
@@ -437,7 +413,7 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
 
     var header = document.createElement('div');
     header.className = 'redo-modal-header';
-    header.innerHTML = '<span class="redo-modal-title">' + escapeHtml(title) + ' &middot; ' + escapeHtml(questionId) + '</span>';
+    header.innerHTML = '<span class="redo-modal-title">加载中...</span>';
     var closeBtn = document.createElement('button');
     closeBtn.className = 'redo-modal-close';
     closeBtn.innerHTML = '&#10005;';
@@ -447,7 +423,7 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
 
     var body = document.createElement('div');
     body.className = 'redo-modal-body';
-    QuestionExtractor.renderQuestionInContainer(body, data, type);
+    body.innerHTML = '<div class="redo-loading">正在加载题目数据...</div>';
     modal.appendChild(body);
 
     var footer = document.createElement('div');
@@ -455,47 +431,7 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
     var submitBtn = document.createElement('button');
     submitBtn.className = 'redo-modal-submit';
     submitBtn.textContent = '提交答案';
-    submitBtn.onclick = function () {
-        var userAnswers = QuestionExtractor.collectUserAnswers(body, data.questionIds);
-        var comparison = {};
-        var allCorrect = true;
-        data.questionIds.forEach(function (qId) {
-            var correctAnswer = '';
-            if (type === 'listening') {
-                try {
-                    var examData = window.__LISTENING_EXAM_DATA__.get(examId);
-                    if (examData && examData.answerKey) {
-                        if (examData.answerKey.text && examData.answerKey.text[qId] !== undefined) {
-                            correctAnswer = String(examData.answerKey.text[qId]);
-                        } else if (examData.answerKey.single && examData.answerKey.single[qId] !== undefined) {
-                            correctAnswer = String(examData.answerKey.single[qId]);
-                        } else if (examData.answerKey.multiple && examData.answerKey.multiple[qId] !== undefined) {
-                            correctAnswer = String(examData.answerKey.multiple[qId]);
-                        }
-                    }
-                } catch (_) {}
-            } else {
-                try {
-                    var examData2 = window.__READING_EXAM_DATA__.get(examId);
-                    if (examData2 && examData2.answerKey && examData2.answerKey[qId] !== undefined) {
-                        correctAnswer = String(examData2.answerKey[qId]);
-                    }
-                } catch (_) {}
-            }
-            var result = QuestionExtractor.compareAnswers(userAnswers, correctAnswer, qId);
-            comparison[qId] = result;
-            if (!result.isCorrect) allCorrect = false;
-        });
-
-        QuestionExtractor.markResults(body, data.questionIds, comparison);
-
-        if (window.MistakeBook && window.MistakeBook.recordRedo) {
-            window.MistakeBook.recordRedo(mistakeId, allCorrect);
-        }
-
-        submitBtn.textContent = '关闭';
-        submitBtn.onclick = function () { closeModal(); };
-    };
+    submitBtn.disabled = true;
     footer.appendChild(submitBtn);
     modal.appendChild(footer);
 
@@ -516,6 +452,78 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
         }
     }
     document.addEventListener('keydown', onEsc);
+
+    var extractor = type === 'reading'
+        ? QuestionExtractor.extractReadingQuestionAsync(examId, questionId)
+        : QuestionExtractor.extractListeningQuestionAsync(examId, questionId);
+
+    extractor.then(function (data) {
+        if (!data) {
+            body.innerHTML = '<div class="mistake-question-unavailable">无法加载题目数据</div>';
+            submitBtn.disabled = true;
+            return;
+        }
+
+        var title = '';
+        try {
+            if (type === 'reading' && window.__READING_EXAM_DATA__ && window.__READING_EXAM_DATA__.has(examId)) {
+                var exam = window.__READING_EXAM_DATA__.get(examId);
+                title = (exam.meta && exam.meta.title) || examId;
+            } else if (type === 'listening' && window.__LISTENING_EXAM_DATA__ && window.__LISTENING_EXAM_DATA__.has(examId)) {
+                var exam2 = window.__LISTENING_EXAM_DATA__.get(examId);
+                title = (exam2.meta && exam2.meta.title) || examId;
+            }
+        } catch (_) {}
+
+        header.querySelector('.redo-modal-title').innerHTML = escapeHtml(title) + ' &middot; ' + escapeHtml(questionId);
+
+        QuestionExtractor.renderQuestionInContainer(body, data, type);
+
+        submitBtn.disabled = false;
+        submitBtn.onclick = function () {
+            var userAnswers = QuestionExtractor.collectUserAnswers(body, data.questionIds);
+            var comparison = {};
+            var allCorrect = true;
+            data.questionIds.forEach(function (qId) {
+                var correctAnswer = '';
+                if (type === 'listening') {
+                    try {
+                        var examData = window.__LISTENING_EXAM_DATA__.get(examId);
+                        if (examData && examData.answerKey) {
+                            if (examData.answerKey.text && examData.answerKey.text[qId] !== undefined) {
+                                correctAnswer = String(examData.answerKey.text[qId]);
+                            } else if (examData.answerKey.single && examData.answerKey.single[qId] !== undefined) {
+                                correctAnswer = String(examData.answerKey.single[qId]);
+                            } else if (examData.answerKey.multiple && examData.answerKey.multiple[qId] !== undefined) {
+                                correctAnswer = String(examData.answerKey.multiple[qId]);
+                            }
+                        }
+                    } catch (_) {}
+                } else {
+                    try {
+                        var examData2 = window.__READING_EXAM_DATA__.get(examId);
+                        if (examData2 && examData2.answerKey && examData2.answerKey[qId] !== undefined) {
+                            correctAnswer = String(examData2.answerKey[qId]);
+                        }
+                    } catch (_) {}
+                }
+                var result = QuestionExtractor.compareAnswers(userAnswers, correctAnswer, qId);
+                comparison[qId] = result;
+                if (!result.isCorrect) allCorrect = false;
+            });
+
+            QuestionExtractor.markResults(body, data.questionIds, comparison);
+
+            if (window.MistakeBook && window.MistakeBook.recordRedo) {
+                window.MistakeBook.recordRedo(mistakeId, allCorrect);
+            }
+
+            submitBtn.textContent = '关闭';
+            submitBtn.onclick = function () { closeModal(); };
+        };
+    }).catch(function () {
+        body.innerHTML = '<div class="mistake-question-unavailable">加载题目时出错</div>';
+    });
 };
 
 window.exportMistakeBook = function () {

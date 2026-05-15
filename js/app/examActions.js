@@ -22,8 +22,21 @@ import { preferredFirstExamByCategory } from '../shared/constants.js';
     let customSuitePortalPosition = null;
 
     function getPracticeCountForExam(examId) {
-        if (!examId || !global.practiceRecords) return 0;
+        if (!examId) return 0;
         var records = global.practiceRecords;
+        if (!records) {
+            try {
+                var raw = localStorage.getItem('practice_records');
+                records = raw ? JSON.parse(raw) : [];
+                if (Array.isArray(records)) {
+                    global.practiceRecords = records;
+                } else {
+                    records = [];
+                }
+            } catch (_) {
+                records = [];
+            }
+        }
         var count = 0;
         for (var i = 0; i < records.length; i++) {
             if (records[i] && String(records[i].examId) === String(examId)) {

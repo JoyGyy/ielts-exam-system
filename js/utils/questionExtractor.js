@@ -1,6 +1,8 @@
 'use strict';
 
 const QuestionExtractor = (function () {
+    var scriptCache = {};
+
     function escapeHtml(str) {
         if (!str) return '';
         return String(str)
@@ -8,6 +10,55 @@ const QuestionExtractor = (function () {
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
+    }
+
+    function loadScript(url) {
+        if (!url) return Promise.reject(new Error('script_url_missing'));
+        if (scriptCache[url]) return scriptCache[url];
+        var promise = new Promise(function (resolve, reject) {
+            var script = document.createElement('script');
+            script.src = url;
+            script.onload = function () { resolve(true); };
+            script.onerror = function () { reject(new Error('script_load_failed:' + url)); };
+            document.head.appendChild(script);
+        });
+        scriptCache[url] = promise;
+        return promise;
+    }
+
+    function getRelativePath(examId, isReading) {
+        if (isReading) {
+            return 'assets/generated/reading-exams/';
+        }
+        return 'assets/generated/listening-exams/';
+    }
+
+    function ensureReadingExamData(examId) {
+        if (window.__READING_EXAM_DATA__ && window.__READING_EXAM_DATA__.has(examId)) {
+            return Promise.resolve(true);
+        }
+        return loadScript('assets/generated/reading-exams/manifest.js').then(function () {
+            var manifest = window.__READING_EXAM_MANIFEST__;
+            var entry = manifest && manifest[examId];
+            if (!entry || !entry.script) {
+                return Promise.reject(new Error('reading_exam_entry_missing:' + examId));
+            }
+            return loadScript('assets/generated/reading-exams/' + entry.script);
+        });
+    }
+
+    function ensureListeningExamData(examId) {
+        if (window.__LISTENING_EXAM_DATA__ && window.__LISTENING_EXAM_DATA__.has(examId)) {
+            return Promise.resolve(true);
+        }
+        return loadScript('assets/generated/listening-exams/manifest.js').then(function () {
+            var manifest = window.__LISTENING_EXAM_MANIFEST__;
+            var entry = manifest && manifest[examId];
+            if (!entry || !entry.script) {
+                return Promise.reject(new Error('listening_exam_entry_missing:' + examId));
+            }
+            return loadScript('assets/generated/listening-exams/' + entry.script);
+        });
     }
 
     function extractReadingQuestion(examId, questionId) {
@@ -286,9 +337,23 @@ const QuestionExtractor = (function () {
         });
     }
 
+    function extractReadingQuestionAsync(examId, questionId) {
+        return ensureReadingExamData(examId).then(function () {
+            return extractReadingQuestion(examId, questionId);
+        });
+    }
+
+    function extractListeningQuestionAsync(examId, questionId) {
+        return ensureListeningExamData(examId).then(function () {
+            return extractListeningQuestion(examId, questionId);
+        });
+    }
+
     return {
         extractReadingQuestion: extractReadingQuestion,
         extractListeningQuestion: extractListeningQuestion,
+        extractReadingQuestionAsync: extractReadingQuestionAsync,
+        extractListeningQuestionAsync: extractListeningQuestionAsync,
         renderQuestionInContainer: renderQuestionInContainer,
         collectUserAnswers: collectUserAnswers,
         compareAnswers: compareAnswers,

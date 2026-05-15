@@ -3279,6 +3279,14 @@ h1, h2, h3, h4, h5, h6 {
     font-style: italic;
 }
 
+.mistake-question-loading,
+.redo-loading {
+    text-align: center;
+    color: var(--color-gray-400, #9ca3af);
+    padding: 12px;
+    font-size: 0.82rem;
+}
+
 .mistake-question-preview input,
 .mistake-question-preview select,
 .mistake-question-preview textarea {
