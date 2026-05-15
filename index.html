@@ -3,7 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>考试总览系统</title>
+        <title>IELTS 练习系统</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
         <link
             rel="icon"
             type="image/svg+xml"
@@ -14,7 +17,7 @@
         <link rel="stylesheet" href="css/countdown-timer.css" />
     </head>
 
-    <body class="hero-body" data-theme="heroui">
+    <body class="hero-body" data-theme="ink">
         <input
             type="file"
             id="folder-picker"
@@ -26,7 +29,7 @@
         <div class="container hero-shell">
             <div class="hero-header">
                 <h1 style="width: 100%">
-                    📚 考试总览系统
+                    IELTS 练习系统
                 </h1>
             </div>
 
@@ -36,28 +39,28 @@
                     type="button"
                     data-view="overview"
                 >
-                    📊 总览
+                    学习总览
                 </button>
                 <button
                     class="nav-btn hero-nav__btn"
                     type="button"
                     data-view="browse"
                 >
-                    📚 题库浏览
+                    题库
                 </button>
                 <button
                     class="nav-btn hero-nav__btn"
                     type="button"
                     data-view="practice"
                 >
-                    📝 练习记录
+                    练习记录
                 </button>
             </nav>
 
             <!-- 总览页面 -->
             <div id="overview-view" class="view active hero-panel hero-section">
                 <div class="hero-panel__header">
-                    <h2 class="hero-panel__title" style="margin: 0;">📊 学习总览</h2>
+                    <h2 class="hero-panel__title" style="margin: 0;">学习总览</h2>
                 </div>
 
                 <div class="category-grid" id="category-overview">
@@ -81,7 +84,7 @@
                             aria-hidden="true"
                         ></span>
                     </button>
-                    <h2 id="browse-title" class="hero-panel__title" style="margin: 0;">题库浏览</h2>
+                    <h2 id="browse-title" class="hero-panel__title" style="margin: 0;">题库</h2>
                     <div
                         class="browse-preference-panel"
                         id="browse-preference-panel"
@@ -207,7 +210,7 @@
             <!-- 练习记录页面 -->
             <div id="practice-view" class="view hero-panel hero-section">
                 <div class="hero-panel__header">
-                    <h2 class="hero-panel__title" style="margin: 0;">📝 练习记录</h2>
+                    <h2 class="hero-panel__title" style="margin: 0;">练习记录</h2>
                 </div>
 
                 <div class="practice-stats hero-grid hero-grid--stats">
@@ -238,7 +241,7 @@
                 <div class="practice-history hero-panel hero-section">
                     <div class="hero-panel__header">
                         <h3 class="hero-panel__title">
-                            📈 练习历史
+                            练习历史
                         </h3>
                         <div
                             id="record-type-filter-buttons"
