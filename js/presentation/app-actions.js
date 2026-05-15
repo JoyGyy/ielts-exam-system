@@ -4,7 +4,6 @@
     var prefetchTriggered = false;
     var attachedPrefetchHandlers = false;
     var browsePrefetchTriggered = false;
-    var morePrefetchTriggered = false;
 
     function exportPracticeMarkdown() {
         if (!global.markdownExporter || typeof global.markdownExporter.exportToMarkdown !== 'function') {
@@ -46,18 +45,6 @@
         }
     }
 
-    function triggerMorePrefetch() {
-        if (morePrefetchTriggered) {
-            return;
-        }
-        morePrefetchTriggered = true;
-        if (global.AppLazyLoader && typeof global.AppLazyLoader.ensureGroup === 'function') {
-            global.AppLazyLoader.ensureGroup('more-tools').catch(function swallow(error) {
-                console.warn('[AppActions] 更多工具预加载失败:', error);
-            });
-        }
-    }
-
     function attachPrefetchTriggers() {
         if (attachedPrefetchHandlers) {
             return;
@@ -75,13 +62,6 @@
         if (browseButton) {
             ['pointerenter', 'focus'].forEach(function bind(eventName) {
                 browseButton.addEventListener(eventName, triggerBrowsePrefetch, { once: true });
-            });
-        }
-
-        var moreButton = document.querySelector('.main-nav [data-view="more"]');
-        if (moreButton) {
-            ['pointerenter', 'focus'].forEach(function bind(eventName) {
-                moreButton.addEventListener(eventName, triggerMorePrefetch, { once: true });
             });
         }
 
@@ -443,7 +423,6 @@
     global.AppActions = Object.assign({}, global.AppActions, {
         exportPracticeMarkdown: exportPracticeMarkdown,
         preloadBrowseView: triggerBrowsePrefetch,
-        preloadMoreTools: triggerMorePrefetch,
         openExamWithFallback: openExamWithFallback,
         startRandomPractice: startRandomPractice,
         // Phase 4

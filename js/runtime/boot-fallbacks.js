@@ -915,7 +915,7 @@
     };
   }
 
-  const VALID_INITIAL_VIEWS = ['overview', 'browse', 'practice', 'history', 'settings'];
+  const VALID_INITIAL_VIEWS = ['overview', 'browse', 'practice'];
 
   function readQueryView() {
     try {

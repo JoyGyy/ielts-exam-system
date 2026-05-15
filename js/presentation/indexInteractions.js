@@ -2,7 +2,6 @@
     'use strict';
 
     var browsePrefetched = false;
-    var morePrefetched = false;
     var indexInteractionsInitialized = false;
 
     function ensureBrowse() {
@@ -15,19 +14,6 @@
             : function fallback() { return Promise.resolve(); };
         loader().catch(function swallow(error) {
             console.warn('[IndexInteractions] 预加载 browse-runtime 失败:', error);
-        });
-    }
-
-    function ensureMore() {
-        if (morePrefetched) {
-            return;
-        }
-        morePrefetched = true;
-        var loader = global.AppEntry && typeof global.AppEntry.ensureMoreToolsGroup === 'function'
-            ? global.AppEntry.ensureMoreToolsGroup
-            : function fallback() { return Promise.resolve(); };
-        loader().catch(function swallow(error) {
-            console.warn('[IndexInteractions] 预加载 more-tools 失败:', error);
         });
     }
 
@@ -201,20 +187,12 @@
 
     function attachNavPrefetch() {
         var browseBtn = document.querySelector('.main-nav [data-view=\"browse\"]');
-        var moreBtn = document.querySelector('.main-nav [data-view=\"more\"]');
 
         if (browseBtn) {
             ['pointerenter', 'focus'].forEach(function (eventName) {
                 browseBtn.addEventListener(eventName, ensureBrowse, { once: true });
             });
             browseBtn.addEventListener('click', ensureBrowse);
-        }
-
-        if (moreBtn) {
-            ['pointerenter', 'focus'].forEach(function (eventName) {
-                moreBtn.addEventListener(eventName, ensureMore, { once: true });
-            });
-            moreBtn.addEventListener('click', ensureMore);
         }
     }
 
