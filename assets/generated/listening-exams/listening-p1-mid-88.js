@@ -10,7 +10,7 @@
       "title": "Office Rental",
       "category": "P1",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p1-mid-88.mp3",
+      "audioSrc": "../../listening/audio/listening-p1-mid-88.mp3",
       "localStorageKey": "ieltsListening_officeRental"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],

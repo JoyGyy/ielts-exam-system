@@ -10,7 +10,7 @@
       "title": "Pine Garden",
       "category": "P2",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p2-mid-92.mp3",
+      "audioSrc": "../../listening/audio/listening-p2-mid-92.mp3",
       "localStorageKey": "ielts_pinegarden_v1"
 },
     "questionList": ["11-12","13-14","15","16","17","18","19","20"],

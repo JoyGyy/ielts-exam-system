@@ -10,7 +10,7 @@
       "title": "Horseback-trip",
       "category": "P1",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p1-mid-96.mp3",
+      "audioSrc": "../../listening/audio/listening-p1-mid-96.mp3",
       "localStorageKey": "ielts_horseback_96"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],

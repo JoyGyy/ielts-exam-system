@@ -10,7 +10,7 @@
       "title": "Working in a summer camp in the USA",
       "category": "P1",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p1-mid-89.mp3",
+      "audioSrc": "../../listening/audio/listening-p1-mid-89.mp3",
       "localStorageKey": "ielts_summercamp_p1"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],

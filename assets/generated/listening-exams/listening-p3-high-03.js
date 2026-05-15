@@ -10,7 +10,7 @@
       "title": "Shampoo Marketing Project",
       "category": "P3",
       "frequency": "high",
-      "audioSrc": "../../assets/listening/audio/listening-p3-high-03.mp3",
+      "audioSrc": "../../listening/audio/listening-p3-high-03.mp3",
       "localStorageKey": "ieltsListening_shampoo_v1"
 },
     "questionList": ["21","22","23","24","25","26","27","28","29","30"],

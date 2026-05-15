@@ -10,7 +10,7 @@
       "title": "PSWs",
       "category": "P3",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p3-mid-66.mp3",
+      "audioSrc": "../../listening/audio/listening-p3-mid-66.mp3",
       "localStorageKey": "ieltsListening_PSWs_v1"
 },
     "questionList": ["21-22","23-24","25","26","27","28","29","30"],

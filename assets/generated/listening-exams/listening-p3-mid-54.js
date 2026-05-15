@@ -10,7 +10,7 @@
       "title": "Chumbe Nature Reserve",
       "category": "P3",
       "frequency": "mid",
-      "audioSrc": "../../assets/listening/audio/listening-p3-mid-54.mp3",
+      "audioSrc": "../../listening/audio/listening-p3-mid-54.mp3",
       "localStorageKey": "ieltsListening_chumbe_v1"
 },
     "questionList": ["21","22","23","24","25-26","27-28","29-30"],

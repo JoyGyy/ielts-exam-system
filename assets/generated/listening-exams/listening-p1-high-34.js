@@ -10,7 +10,7 @@
       "title": "Wedding arrangements",
       "category": "P1",
       "frequency": "high",
-      "audioSrc": "../../assets/listening/audio/listening-p1-high-34.mp3",
+      "audioSrc": "../../listening/audio/listening-p1-high-34.mp3",
       "localStorageKey": "ieltsListening_wedding_v1"
 },
     "questionList": ["1","2","3","4","5","6","7","8","9","10"],
