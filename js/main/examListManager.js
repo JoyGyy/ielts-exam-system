@@ -857,13 +857,6 @@ function setupOverviewInteractions() {
 
 // --- Library Configuration UI ---
 
-function showView(viewName, animate) {
-    // placeholder - 实际实现在 app.js 中
-    if (typeof window.app !== 'undefined' && typeof window.app.navigateToView === 'function') {
-        window.app.navigateToView(viewName);
-    }
-}
-
 async function loadLibraryInternal(keyOrForceReload = false) {
     const manager = await ensureLibraryManagerReady();
     if (!manager) {
