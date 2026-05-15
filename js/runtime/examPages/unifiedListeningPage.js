@@ -133,7 +133,11 @@
 
         // Set audio source
         if (dom.audio && meta.audioSrc) {
-            dom.audio.src = meta.audioSrc;
+            try {
+                dom.audio.src = new URL(meta.audioSrc, window.location.href).href;
+            } catch (_) {
+                dom.audio.src = meta.audioSrc;
+            }
         }
 
         // Render questions
