@@ -134,10 +134,16 @@
         // Set audio source
         if (dom.audio && meta.audioSrc) {
             try {
-                dom.audio.src = new URL(meta.audioSrc, window.location.href).href;
+                const resolvedUrl = new URL(meta.audioSrc, window.location.href).href;
+                dom.audio.src = resolvedUrl;
+                console.log('[Listening] Audio src:', resolvedUrl);
             } catch (_) {
                 dom.audio.src = meta.audioSrc;
+                console.log('[Listening] Audio src (raw):', meta.audioSrc);
             }
+            dom.audio.addEventListener('error', (e) => {
+                console.error('[Listening] Audio error:', dom.audio.error?.code, dom.audio.error?.message, dom.audio.src);
+            }, { once: true });
         }
 
         // Render questions
@@ -206,7 +212,10 @@
         if (dom.playPauseBtn) {
             dom.playPauseBtn.addEventListener('click', () => {
                 if (dom.audio.paused) {
-                    dom.audio.play();
+                    console.log('[Listening] Play clicked, src:', dom.audio.src, 'readyState:', dom.audio.readyState, 'networkState:', dom.audio.networkState);
+                    dom.audio.play().catch(err => {
+                        console.error('[Listening] Play failed:', err.message, 'src:', dom.audio.src);
+                    });
                     dom.playPauseBtn.innerHTML = '&#10074;&#10074;';
                 } else {
                     dom.audio.pause();
