@@ -4,8 +4,8 @@
     --shui-shell-max-width: 1200px;
     --shui-text-strong: #111827;
     --shui-text-muted: #6B7280;
-    --shui-accent: #3730A3;
-    --shui-accent-alt: #4338CA;
+    --shui-accent: #d97706;
+    --shui-accent-alt: #ea580c;
 }
 
 body.hero-body {
@@ -46,8 +46,8 @@ body.hero-body {
     padding: 4px 12px;
     border-radius: 999px;
     border: 1px solid #E5E1DB;
-    background: #EEF2FF;
-    color: #3730A3;
+    background: #FEF3C7;
+    color: #d97706;
 }
 
 .hero-nav {
@@ -85,8 +85,8 @@ body.hero-body {
 }
 
 .hero-nav__btn.active {
-    color: #3730A3;
-    border-bottom-color: #3730A3;
+    color: #d97706;
+    border-bottom-color: #d97706;
     font-weight: 600;
     background: transparent;
     box-shadow: none;
@@ -243,8 +243,8 @@ body.hero-body {
     font-size: 0.85rem;
     padding: 4px 12px;
     border-radius: 999px;
-    background: #EEF2FF;
-    color: #3730A3;
+    background: #FEF3C7;
+    color: #d97706;
 }
 
 .hero-section {
@@ -256,7 +256,7 @@ body.hero-body {
 .shui-filter-btn {
     border-radius: 8px;
     border: none;
-    background: #3730A3;
+    background: #d97706;
     color: #ffffff;
     padding: 10px 18px;
     font-weight: 600;
@@ -270,9 +270,9 @@ body.hero-body {
 .hero-btn:focus-visible,
 .hero-panel .btn:not(.hero-btn):focus-visible,
 .shui-filter-btn:focus-visible {
-    background: #4338CA;
+    background: #ea580c;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(55, 48, 163, 0.25);
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
 }
 
 .hero-btn--ghost,
@@ -394,13 +394,13 @@ body.hero-body {
 .category-grid .category-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #3730A3;
+    border-color: #d97706;
 }
 
 /* Category card action buttons */
 .category-card .btn[data-action="browse-category"],
 .category-card .btn[data-action="start-random-practice"] {
-    background: #3730A3;
+    background: #d97706;
     border: none;
     color: #ffffff !important;
     box-shadow: none;
@@ -408,23 +408,23 @@ body.hero-body {
 
 .category-card .btn[data-action="browse-category"]:hover,
 .category-card .btn[data-action="start-random-practice"]:hover {
-    background: #4338CA;
+    background: #ea580c;
     transform: translateY(-1px);
 }
 
 /* Data management panel */
 .data-management-panel .data-mgmt-btn {
-    background: #3730A3;
+    background: #d97706;
 }
 
 .data-management-panel .data-mgmt-btn:hover,
 .data-management-panel .data-mgmt-btn:focus-visible {
-    background: #4338CA;
+    background: #ea580c;
 }
 
 /* Exam item action button overrides */
 #browse-view .exam-item-action-btn {
-    background: #3730A3 !important;
+    background: #d97706 !important;
     border: none !important;
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -436,19 +436,19 @@ body.hero-body {
 
 #browse-view .exam-item-action-btn:hover,
 #browse-view .exam-item-action-btn:focus-visible {
-    background: #4338CA !important;
+    background: #ea580c !important;
     transform: translateY(-1px) scale(1) !important;
-    box-shadow: 0 2px 8px rgba(55, 48, 163, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
 }
 
 #browse-view .exam-item-action-btn[data-action="start"] {
-    background: #3730A3 !important;
+    background: #d97706 !important;
     color: #ffffff !important;
 }
 
 #browse-view .exam-item-action-btn[data-action="start"]:hover {
-    background: #4338CA !important;
-    box-shadow: 0 2px 8px rgba(55, 48, 163, 0.25) !important;
+    background: #ea580c !important;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
 }
 
 /* Glass button override — remove glassmorphism */
@@ -479,9 +479,9 @@ body.hero-body {
 
 .shui-glass-btn.active,
 .shui-glass-btn[aria-pressed="true"] {
-    background: #EEF2FF !important;
-    color: #3730A3 !important;
-    border-color: #3730A3 !important;
+    background: #FEF3C7 !important;
+    color: #d97706 !important;
+    border-color: #d97706 !important;
 }
 
 /* Mobile responsive */
