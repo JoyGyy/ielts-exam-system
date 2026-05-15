@@ -3,15 +3,6 @@
 const QuestionExtractor = (function () {
     var scriptCache = {};
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
-
     function loadScript(url) {
         if (!url) return Promise.reject(new Error('script_url_missing'));
         if (scriptCache[url]) return scriptCache[url];

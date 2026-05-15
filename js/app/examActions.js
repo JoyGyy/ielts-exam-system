@@ -167,15 +167,6 @@ import { preferredFirstExamByCategory } from '../shared/constants.js';
         };
     }
 
-    function escapeHtml(value) {
-        return String(value == null ? '' : value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
     function getCustomSuiteDraft() {
         if (global.appStateService && typeof global.appStateService.getCustomSuiteDraft === 'function') {
             return global.appStateService.getCustomSuiteDraft();
@@ -754,11 +745,11 @@ import { preferredFirstExamByCategory } from '../shared/constants.js';
                 return;
             }
 
-            global.browseController.setBrowseFilterState('all', 'all');
+            global.browseController.setBrowseFilterState('all', 'reading');
         } else {
             // 降级
             if (typeof global.clearPendingBrowseAutoScroll === 'function') global.clearPendingBrowseAutoScroll();
-            if (typeof global.setBrowseFilterState === 'function') global.setBrowseFilterState('all', 'all');
+            if (typeof global.setBrowseFilterState === 'function') global.setBrowseFilterState('all', 'reading');
         }
 
         if (global.setBrowseTitle) global.setBrowseTitle('题库列表');

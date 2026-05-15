@@ -9,15 +9,6 @@ const MistakeBookView = (function () {
     function getExpandedMistakes() { return window._mistakeExpandedMistakes || (window._mistakeExpandedMistakes = {}); }
     function getSelectedMistakes() { return window._mistakeSelected || (window._mistakeSelected = {}); }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
-
     function formatDate(dateStr) {
         if (!dateStr) return '';
         var d = new Date(dateStr);

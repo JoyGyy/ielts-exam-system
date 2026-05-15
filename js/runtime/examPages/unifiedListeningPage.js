@@ -187,10 +187,6 @@
         });
     }
 
-    function escapeHtml(s) {
-        return s ? s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) : '';
-    }
-
     /* ========== Audio Player ========== */
     function attachAudioEvents() {
         if (!dom.audio) return;

@@ -86,6 +86,9 @@
     --transition-normal: 200ms ease-out;
     --transition-slow: 300ms ease-out;
 
+    /* 毛玻璃模糊 */
+    --glass-blur: blur(20px);
+
     /* 布局 */
     --container-max-width: 1200px;
     --container-padding: var(--space-6);
