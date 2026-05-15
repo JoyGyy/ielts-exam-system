@@ -457,6 +457,10 @@ body {
     min-height: 400px;
 }
 
+.view.active {
+    display: block;
+}
+
 /* Bloom Light Palette（青橙玻璃质感） */
 :root {
     --bloom-surface: rgba(255, 252, 247, 0.95);

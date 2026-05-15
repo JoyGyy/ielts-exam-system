@@ -469,6 +469,7 @@ const lifecycleMixin = {
         }
 
         const stats = statsService.calculate(list);
+        console.log('[OverviewCards] stats 计算完成, reading:', stats.reading?.length);
         const app = this;
         this._overviewViewInstance.render(stats, {
             container,

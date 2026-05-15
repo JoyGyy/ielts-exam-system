@@ -10,7 +10,7 @@
       "title": "Driving License",
       "category": "P2",
       "frequency": "high",
-      "audioSrc": "assets/listening/listening-p2-high-10.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p2-high-10.mp3",
       "localStorageKey": "ieltsListening_drivingLicense_v1"
 },
     "questionList": ["11","12","13","14","15","16","17","18","19","20"],

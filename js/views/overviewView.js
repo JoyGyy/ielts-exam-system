@@ -3,12 +3,8 @@
 
     class OverviewView {
         constructor({
-            domBuilder = global.DOM?.builder,
-            events = global.DOM?.events,
             containerSelector = '#category-overview'
         } = {}) {
-            this.dom = domBuilder;
-            this.events = events;
             this.containerSelector = containerSelector;
             this.actions = {
                 onBrowseCategory: null,
@@ -17,6 +13,14 @@
                 onStartEndless: null
             };
             this.delegatesBound = false;
+        }
+
+        get dom() {
+            return (global.DOM && global.DOM.builder) || null;
+        }
+
+        get events() {
+            return (global.DOM && global.DOM.events) || null;
         }
 
         setActions(actions = {}) {

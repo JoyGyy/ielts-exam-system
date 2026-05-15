@@ -328,8 +328,14 @@ function bootstrapCoreDataInBackground() {
             }
             return ensureExamData();
         })
+        .then(function (result) {
+            syncOverviewAfterIndexLoad();
+            return ensureLazyGroup('practice-suite').catch(function (err) {
+                console.warn('[MainEntry] practice-suite 加载失败:', err);
+            });
+        })
         .catch(function onBackgroundBootstrapError(error) {
-            console.warn('[MainEntry] 后台题库引导失败:', error);
+            console.error('[MainEntry] 后台题库引导失败:', error);
         });
 }
 

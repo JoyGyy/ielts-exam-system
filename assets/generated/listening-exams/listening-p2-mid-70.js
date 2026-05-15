@@ -10,7 +10,7 @@
       "title": "Museum Tour",
       "category": "P2",
       "frequency": "mid",
-      "audioSrc": "assets/listening/listening-p2-mid-70.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p2-mid-70.mp3",
       "localStorageKey": "ieltsListening_museum_tour"
 },
     "questionList": ["11","12","13","14","15","16","17","18","19","20"],

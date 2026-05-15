@@ -54,3 +54,25 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
+
+/* 简单做题计时器 */
+.practice-timer {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  z-index: 9999;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.practice-timer.is-hidden {
+  display: none;
+}

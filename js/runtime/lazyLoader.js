@@ -211,78 +211,46 @@ function loadGroup(groupName, files) {
         return Promise.resolve();
     }
 
-    // 尝试加载 bundle（单个请求替代多个文件）
-    var bundleUrl = 'assets/bundles/' + groupName + '.bundle.js';
-    var bundleKey = 'bundle:' + groupName;
-    if (scriptStatus[bundleKey] === 'loaded') {
-        return Promise.resolve();
-    }
-    if (scriptStatus[bundleKey] && scriptStatus[bundleKey].then) {
-        return scriptStatus[bundleKey];
-    }
+    // browse-runtime 组按依赖顺序分批加载
+    if (groupName === 'browse-runtime') {
+        var mainIndex = list.indexOf('js/main.js');
+        var mainSubModules = [
+            'js/main/viewHelpers.js',
+            'js/main/globalShims.js',
+            'js/main/practiceView.js',
+            'js/main/examListManager.js'
+        ];
+        var withoutMain = mainIndex >= 0
+            ? list.filter(function (file) {
+                return file !== 'js/main.js' && mainSubModules.indexOf(file) === -1;
+            })
+            : list.slice();
 
-    scriptStatus[bundleKey] = new Promise(function tryBundle(resolve) {
-        var script = document.createElement('script');
-        script.src = bundleUrl;
-        script.async = true;
-        script.onload = function () {
-            scriptStatus[bundleKey] = 'loaded';
-            resolve(true);
-        };
-        script.onerror = function () {
-            // bundle 不存在，回退到逐文件加载
-            scriptStatus[bundleKey] = null;
-            resolve(false);
-        };
-        document.head.appendChild(script);
-    }).then(function (bundleLoaded) {
-        if (bundleLoaded) {
-            return;
+        var batches = [
+            ['js/views/legacyViewBundle.js'],
+            ['js/app/examActions.js'],
+            ['js/app/browseController.js'],
+            ['js/presentation/message-center.js'],
+            withoutMain.filter(function (file) {
+                return [
+                    'js/views/legacyViewBundle.js',
+                    'js/app/examActions.js',
+                    'js/app/browseController.js',
+                    'js/presentation/message-center.js',
+                    'js/main.js'
+                ].indexOf(file) === -1;
+            })
+        ];
+        batches.push(mainSubModules.filter(function (file) {
+            return list.indexOf(file) !== -1;
+        }));
+        if (mainIndex >= 0) {
+            batches.push(['js/main.js']);
         }
-        // 回退：逐文件加载
-        if (groupName === 'browse-runtime') {
-            var mainIndex = list.indexOf('js/main.js');
-            var mainSubModules = [
-                'js/main/viewHelpers.js',
-                'js/main/globalShims.js',
-                'js/main/practiceView.js',
-                'js/main/examListManager.js'
-            ];
-            var withoutMain = mainIndex >= 0
-                ? list.filter(function (file) {
-                    return file !== 'js/main.js' && mainSubModules.indexOf(file) === -1;
-                })
-                : list.slice();
+        return loadByBatches(batches);
+    }
 
-            var batches = [
-                ['js/views/legacyViewBundle.js'],
-                ['js/app/examActions.js'],
-                ['js/app/browseController.js'],
-                ['js/presentation/message-center.js'],
-                withoutMain.filter(function (file) {
-                    return [
-                        'js/views/legacyViewBundle.js',
-                        'js/app/examActions.js',
-                        'js/app/browseController.js',
-                        'js/presentation/message-center.js',
-                        'js/main.js'
-                    ].indexOf(file) === -1;
-                })
-            ];
-            // main.js 子模块（在 main.js 之前加载）
-            batches.push(mainSubModules.filter(function (file) {
-                return list.indexOf(file) !== -1;
-            }));
-            if (mainIndex >= 0) {
-                batches.push(['js/main.js']);
-            }
-            return loadByBatches(batches);
-        }
-
-        return sequentialLoad(list);
-    });
-
-    return scriptStatus[bundleKey];
+    return sequentialLoad(list);
 }
 
 function mirrorAliasStatus() {

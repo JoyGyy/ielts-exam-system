@@ -2015,7 +2015,7 @@
             syncPrimaryActionButtons();
         } else {
             state.reviewMode = true;
-            if (data.readOnly !== false) {
+            if (data.readOnly === true) {
                 enterSubmittedReadOnlyState('stationary-review');
             } else {
                 setReadOnlyMode(false);
@@ -2697,7 +2697,7 @@
             }
             if (data.reviewMode) {
                 state.reviewMode = true;
-                if (data.readOnly !== false) {
+                if (data.readOnly === true) {
                     enterSubmittedReadOnlyState('stationary-review');
                 } else {
                     setReadOnlyMode(false);

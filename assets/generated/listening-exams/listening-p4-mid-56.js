@@ -10,7 +10,7 @@
       "title": "Boar and Red Deer",
       "category": "P4",
       "frequency": "mid",
-      "audioSrc": "assets/listening/listening-p4-mid-56.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p4-mid-56.mp3",
       "localStorageKey": "ieltsListening_boar_deer_v1"
 },
     "questionList": ["31","32","33","34","35","36","37","38","39","40"],

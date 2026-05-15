@@ -10,7 +10,7 @@
       "title": "The Evolution and Cultivation of Vegetables",
       "category": "P4",
       "frequency": "high",
-      "audioSrc": "assets/listening/listening-p4-high-67.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p4-high-67.mp3",
       "localStorageKey": "ieltsListening_vegetables_v1"
 },
     "questionList": ["31","32","33","34","35","36","37","38","39","40"],

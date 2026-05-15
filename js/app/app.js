@@ -78,6 +78,7 @@ function applyMixins() {
         mixins.lifecycle || {},
         mixins.navigation || {},
         mixins.readingLaunch || {},
+        mixins.listeningLaunch || {},
         mixins.examSession || {},
         mixins.fallback || {});
 }

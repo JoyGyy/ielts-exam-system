@@ -257,6 +257,19 @@ function openExam(examId, options = {}) {
     if (!exam) return showMessage('未找到题目', 'error');
     if (!exam.hasHtml) return viewPDF(examId);
 
+    // 听力题使用统一页面
+    if (exam.type === 'listening' || examId.startsWith('listening-')) {
+        const manifest = window.__LISTENING_EXAM_MANIFEST__;
+        const entry = manifest && manifest[examId];
+        if (entry) {
+            const url = `assets/generated/listening-exams/unifiedListeningPage.html?examId=${encodeURIComponent(examId)}&dataKey=${encodeURIComponent(entry.dataKey || examId)}`;
+            const w = window.open(url, `exam_${examId}`, 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            if (!w) return showMessage('无法打开窗口，请检查弹窗设置', 'error');
+            showMessage('正在打开: ' + exam.title, 'success');
+            return;
+        }
+    }
+
     const fullPath = window.buildResourcePath(exam, 'html');
     const examWindow = window.open(fullPath, `exam_${exam.id}`, 'width=1200,height=800,scrollbars=yes,resizable=yes');
     if (!examWindow) {

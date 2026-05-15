@@ -961,6 +961,11 @@ async function initializeLegacyComponents() {
     setupStorageSyncListener(); // Listen for storage changes from other tabs
 }
 
+// Expose on window so lifecycleMixin can call it
+if (typeof window !== 'undefined') {
+    window.initializeLegacyComponents = initializeLegacyComponents;
+}
+
 // Clean up old cache and configurations
 async function cleanupOldCache() {
     try {

@@ -10,7 +10,7 @@
       "title": "Ancient cave art symbols",
       "category": "P4",
       "frequency": "high",
-      "audioSrc": "assets/listening/listening-p4-high-20.mp3",
+      "audioSrc": "../../assets/listening/audio/listening-p4-high-20.mp3",
       "localStorageKey": "ieltsListening_enhanced_v5"
 },
     "questionList": ["31","32","33","34","35","36","37","38","39","40"],
