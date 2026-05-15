@@ -250,7 +250,7 @@ const MistakeBookView = (function () {
     }
 
     function updateFilterButtons(activeType) {
-        var btns = document.querySelectorAll('#mistakes-type-filter .shui-segmented-btn');
+        var btns = document.querySelectorAll('#mistakes-type-filter .shui-segmented-btn, #mistakes-type-filter .segmented-btn');
         btns.forEach(function (btn) {
             var isActive = btn.getAttribute('data-filter-type') === activeType;
             btn.classList.toggle('active', isActive);

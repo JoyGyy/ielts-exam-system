@@ -107,7 +107,7 @@
         const manifest = global.__LISTENING_EXAM_MANIFEST__;
         const entry = manifest && manifest[state.dataKey || state.examId];
         if (!entry || !entry.script) {
-            console.error('No manifest entry for', state.dataKey || state.examId);
+            console.error('[Listening] No manifest entry for', state.dataKey || state.examId, 'manifest exists:', !!manifest);
             return null;
         }
         const scriptUrl = entry.script.startsWith('.') || entry.script.startsWith('/')
@@ -115,12 +115,18 @@
             : './' + entry.script;
         try {
             await loadScript(scriptUrl);
-        } catch (_) {
-            // ignore
+        } catch (loadErr) {
+            console.error('[Listening] Failed to load exam script:', scriptUrl, loadErr);
         }
         const registry = global.__LISTENING_EXAM_DATA__;
-        if (!registry || typeof registry.get !== 'function') return null;
+        if (!registry || typeof registry.get !== 'function') {
+            console.error('[Listening] Registry not available, __LISTENING_EXAM_DATA__:', typeof global.__LISTENING_EXAM_DATA__);
+            return null;
+        }
         state.dataset = registry.get(state.dataKey || state.examId);
+        if (!state.dataset) {
+            console.error('[Listening] Dataset not found in registry for key:', state.dataKey || state.examId);
+        }
         return state.dataset;
     }
 
@@ -132,7 +138,11 @@
         if (dom.subtitle) dom.subtitle.textContent = `P${(meta.category || '').replace('P', '')} · ${meta.frequency || ''}`;
 
         // Set audio source
-        if (dom.audio && meta.audioSrc) {
+        if (!dom.audio) {
+            console.warn('[Listening] Audio element not found in DOM');
+        } else if (!meta.audioSrc) {
+            console.warn('[Listening] No audioSrc in meta for', state.examId, meta);
+        } else {
             try {
                 const resolvedUrl = new URL(meta.audioSrc, window.location.href).href;
                 dom.audio.src = resolvedUrl;

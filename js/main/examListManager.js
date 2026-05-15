@@ -360,7 +360,7 @@ function filterRecordsByType(type) {
     // 更新练习历史筛选按钮的 active 状态
     var container = document.getElementById('record-type-filter-buttons');
     if (container) {
-        var buttons = container.querySelectorAll('.shui-segmented-btn');
+        var buttons = container.querySelectorAll('.shui-segmented-btn, .segmented-btn');
         for (var i = 0; i < buttons.length; i++) {
             var btn = buttons[i];
             if (btn.dataset.filterType === type) {
@@ -470,7 +470,7 @@ function filterByType(type) {
     // 更新题库浏览筛选按钮的 active 状态
     var container = document.getElementById('type-filter-buttons');
     if (container) {
-        var buttons = container.querySelectorAll('.shui-segmented-btn');
+        var buttons = container.querySelectorAll('.shui-segmented-btn, .segmented-btn');
         for (var i = 0; i < buttons.length; i++) {
             var btn = buttons[i];
             if (btn.dataset.filterType === type || btn.dataset.filterId === type) {
