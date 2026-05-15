@@ -8,7 +8,7 @@ const navigationMixin = {
         // 简化的URL参数获取，避免依赖Utils
         const urlParams = new URLSearchParams(window.location.search);
         const urlView = urlParams.get('view');
-        const initialView = urlView || 'overview';
+        const initialView = urlView || 'browse';
 
         // 初始化完成后立即调用导航到指定视图
         this.navigateToView(initialView);
@@ -56,9 +56,6 @@ const navigationMixin = {
      */
     onViewActivated(viewName) {
         switch (viewName) {
-            case 'overview':
-                this.refreshOverviewData();
-                break;
             case 'browse':
                 // 如果存在待应用的筛选，则优先应用而不重置
                 if (window.__pendingBrowseFilter && typeof window.applyBrowseFilter === 'function') {

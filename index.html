@@ -37,13 +37,6 @@
                 <button
                     class="nav-btn hero-nav__btn active"
                     type="button"
-                    data-view="overview"
-                >
-                    学习总览
-                </button>
-                <button
-                    class="nav-btn hero-nav__btn"
-                    type="button"
                     data-view="browse"
                 >
                     题库
@@ -57,19 +50,8 @@
                 </button>
             </nav>
 
-            <!-- 总览页面 -->
-            <div id="overview-view" class="view active hero-panel hero-section">
-                <div class="hero-panel__header">
-                    <h2 class="hero-panel__title" style="margin: 0;">学习总览</h2>
-                </div>
-
-                <div class="category-grid" id="category-overview">
-                    <!-- 分类卡片将通过JavaScript动态生成 -->
-                </div>
-            </div>
-
             <!-- 题库浏览页面 -->
-            <div id="browse-view" class="view hero-panel hero-section">
+            <div id="browse-view" class="view active hero-panel hero-section">
                 <div class="browse-title-bar hero-panel__header">
                     <button
                         class="browse-title-trigger"
@@ -381,7 +363,6 @@
 
         <!-- 工具库与基础视图 -->
         <script type="module" src="js/utils/dom.js"></script>
-        <script src="js/views/overviewView.js"></script>
         <script src="js/presentation/navigation-controller.js"></script>
 
         <!-- 入口与懒加载代理 -->

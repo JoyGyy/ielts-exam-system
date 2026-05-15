@@ -84,7 +84,7 @@ function initializeNavigationShell() {
             window.NavigationController.ensure({
                 containerSelector: '.main-nav',
                 activeClass: 'active',
-                initialView: 'overview',
+                initialView: 'browse',
                 syncOnNavigate: true,
                 onRepeatNavigate: function onRepeatNavigate(viewName) {
                     if (viewName === 'browse' && typeof window.resetBrowseViewToAll === 'function') {
@@ -270,11 +270,8 @@ function syncOverviewAfterIndexLoad() {
     }
     try {
         window.app.setState('exam.index', list.slice());
-        if (typeof window.app.refreshOverviewData === 'function') {
-            window.app.refreshOverviewData();
-        }
     } catch (error) {
-        console.warn('[MainEntry] 同步总览数据失败:', error);
+        console.warn('[MainEntry] 同步索引数据失败:', error);
     }
 }
 

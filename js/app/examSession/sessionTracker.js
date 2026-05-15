@@ -778,7 +778,6 @@
 
                 // 更新UI
                 this.updateExamStatus(examId, 'completed');
-                this.refreshOverviewData();
 
                 // 显示完成通知
                 this.showPracticeCompletionNotification(examId, practiceRecord);

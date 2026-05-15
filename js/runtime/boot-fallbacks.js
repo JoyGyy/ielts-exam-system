@@ -6,7 +6,7 @@
       if (typeof document === 'undefined') {
         return;
       }
-      var normalized = (typeof viewName === 'string' && viewName) ? viewName : 'overview';
+      var normalized = (typeof viewName === 'string' && viewName) ? viewName : 'browse';
       var target = document.getElementById(normalized + '-view');
       if (!target) {
         console.warn('[Fallback] 未找到视图节点:', normalized);
@@ -915,7 +915,7 @@
     };
   }
 
-  const VALID_INITIAL_VIEWS = ['overview', 'browse', 'practice'];
+  const VALID_INITIAL_VIEWS = ['browse', 'practice'];
 
   function readQueryView() {
     try {
@@ -938,7 +938,7 @@
     if (queryView && VALID_INITIAL_VIEWS.indexOf(queryView) !== -1) {
       return queryView;
     }
-    return 'overview';
+    return 'browse';
   }
 
   function bootInitialView() {

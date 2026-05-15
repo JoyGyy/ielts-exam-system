@@ -280,7 +280,7 @@ const lifecycleMixin = {
             // 返回按钮
             const backBtn = e.target.closest('.btn-back');
             if (backBtn) {
-                this.navigateToView('overview');
+                this.navigateToView('browse');
             }
 
             // 分类操作按钮

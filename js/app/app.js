@@ -15,7 +15,7 @@ import '../services/overviewStats.js';
 
 class ExamSystemApp {
     constructor() {
-        this.currentView = 'overview';
+        this.currentView = 'browse';
         this.components = {};
         this.isInitialized = false;
 
