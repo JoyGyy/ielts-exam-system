@@ -18,8 +18,8 @@ var PracticeChart = {
 
         var ctx = canvas.getContext('2d');
         var gradient = ctx.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.8)');
-        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.4)');
+        gradient.addColorStop(0, 'rgba(217, 119, 6, 0.8)');
+        gradient.addColorStop(1, 'rgba(234, 88, 12, 0.4)');
 
         this.chart = new Chart(ctx, {
             type: 'bar',
@@ -29,7 +29,7 @@ var PracticeChart = {
                     label: '练习次数',
                     data: data.values || [0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: gradient,
-                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderColor: 'rgba(217, 119, 6, 1)',
                     borderWidth: 1,
                     borderRadius: 6,
                     borderSkipped: false

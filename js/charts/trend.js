@@ -18,8 +18,8 @@ var TrendChart = {
 
         var ctx = canvas.getContext('2d');
         var gradient = ctx.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
-        gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+        gradient.addColorStop(0, 'rgba(217, 119, 6, 0.3)');
+        gradient.addColorStop(1, 'rgba(217, 119, 6, 0)');
 
         this.chart = new Chart(ctx, {
             type: 'line',
@@ -30,9 +30,9 @@ var TrendChart = {
                     data: data.values || [],
                     fill: true,
                     backgroundColor: gradient,
-                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderColor: 'rgba(217, 119, 6, 1)',
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                    pointBackgroundColor: 'rgba(217, 119, 6, 1)',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
                     pointRadius: 4,
