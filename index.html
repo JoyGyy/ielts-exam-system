@@ -6,7 +6,7 @@
         <title>IELTS 练习系统</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
         <link
             rel="icon"
             type="image/svg+xml"
@@ -15,9 +15,10 @@
         <link rel="stylesheet" href="css/main.css" />
         <link rel="stylesheet" href="css/heroui-bridge.css" />
         <link rel="stylesheet" href="css/countdown-timer.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     </head>
 
-    <body class="hero-body" data-theme="ink">
+    <body data-theme="ink">
         <input
             type="file"
             id="folder-picker"
@@ -26,93 +27,41 @@
         />
         <div class="message-container" id="message-container"></div>
 
-        <div class="container hero-shell">
-            <div class="hero-header">
-                <h1 style="width: 100%">
-                    IELTS 练习系统
-                </h1>
+        <!-- 顶部导航 -->
+        <nav class="main-nav" data-nav-controller="legacy">
+            <div class="nav-content">
+                <div class="nav-title">
+                    <div class="nav-title-icon">📚</div>
+                    <span>IELTS 练习系统</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab active" type="button" data-view="browse">题库</button>
+                    <button class="nav-tab" type="button" data-view="mistakes">错题本</button>
+                    <div class="nav-tab-indicator"></div>
+                </div>
+                <div class="nav-actions"></div>
             </div>
+        </nav>
 
-            <nav class="main-nav hero-nav" data-nav-controller="legacy">
-                <button
-                    class="nav-btn hero-nav__btn active"
-                    type="button"
-                    data-view="browse"
-                >
-                    题库
-                </button>
-                <button
-                    class="nav-btn hero-nav__btn"
-                    type="button"
-                    data-view="mistakes"
-                >
-                    错题本
-                </button>
-            </nav>
+        <div class="container main-content">
 
             <!-- 题库浏览页面 -->
-            <div id="browse-view" class="view active hero-panel hero-section">
-                <div class="browse-title-bar hero-panel__header">
-                    <button
-                        class="browse-title-trigger"
-                        id="browse-title-trigger"
-                        type="button"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                        title="列表偏好"
-                    >
-                        📚<span
-                            class="browse-title-dot"
-                            aria-hidden="true"
-                        ></span>
-                    </button>
-                    <h2 id="browse-title" class="hero-panel__title" style="margin: 0;">题库</h2>
-                    <div
-                        class="browse-preference-panel"
-                        id="browse-preference-panel"
-                        hidden
-                    >
-                        <label class="browse-preference-option">
-                            <input
-                                type="checkbox"
-                                id="browse-remember-position"
-                            />
-                            <span class="browse-preference-text"
-                                >列表位置记录</span
-                            >
-                        </label>
-                    </div>
-                    <div
-                        id="type-filter-buttons"
-                        class="hero-panel__actions shui-filter-group shui-segmented-control"
-                    >
-                        <button
-                            class="shui-segmented-btn active"
-                            type="button"
-                            aria-pressed="true"
-                            data-filter-type="all"
-                            onclick="filterByType('all')"
-                        >
-                            全部
-                        </button>
-                        <button
-                            class="shui-segmented-btn"
-                            type="button"
-                            aria-pressed="false"
-                            data-filter-type="reading"
-                            onclick="filterByType('reading')"
-                        >
-                            阅读
-                        </button>
-                        <button
-                            class="shui-segmented-btn"
-                            type="button"
-                            aria-pressed="false"
-                            data-filter-type="listening"
-                            onclick="filterByType('listening')"
-                        >
-                            听力
-                        </button>
+            <div id="browse-view" class="view active">
+                <div class="page-header">
+                    <h1 class="page-title">题库</h1>
+                    <div class="filter-container">
+                        <div class="search-container">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="搜索题目..." id="exam-search-input" aria-label="搜索题目" onkeyup="searchExams(this.value)">
+                            <button type="button" class="search-clear" id="search-clear-btn" aria-label="清除搜索" hidden onclick="clearSearch()">×</button>
+                        </div>
+                        <div id="type-filter-buttons" class="segmented-control">
+                        <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="all" onclick="filterByType('all')">全部</button>
+                        <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="reading" onclick="filterByType('reading')">阅读</button>
+                        <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="listening" onclick="filterByType('listening')">听力</button>
                     </div>
                 </div>
 
@@ -161,28 +110,11 @@
                                     频率高→低
                                 </option>
                             </select>
-                            <div class="browse-sort-icon">
-                                <svg
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 14 14"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        d="M3.5 5.25L7 8.75L10.5 5.25"
-                                        stroke="currentColor"
-                                        stroke-width="1.5"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    />
-                                </svg>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="exam-list-container"></div>
+                <div id="exam-list-container" class="card-grid stagger-container"></div>
                 <div class="loading">
                     <div class="spinner"></div>
                     <p>正在加载题目列表...</p>
@@ -190,87 +122,44 @@
             </div>
 
             <!-- 错题本页面 -->
-            <div id="mistakes-view" class="view hero-panel hero-section">
-                <div class="hero-panel__header">
-                    <h2 class="hero-panel__title" style="margin: 0;">错题本</h2>
-                    <div class="hero-panel__actions">
-                        <button
-                            class="btn btn-warning hero-btn hero-btn--warn"
-                            onclick="clearMistakeBook()"
-                        >
-                            🗑️ 清空错题本
-                        </button>
+            <div id="mistakes-view" class="view">
+                <div class="page-header">
+                    <h1 class="page-title">错题本</h1>
+                    <div class="filter-container">
+                        <div id="mistakes-type-filter" class="segmented-control">
+                            <button class="segmented-btn active" type="button" aria-pressed="true" data-filter-type="all" onclick="filterMistakesByType('all')">全部</button>
+                            <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="reading" onclick="filterMistakesByType('reading')">阅读</button>
+                            <button class="segmented-btn" type="button" aria-pressed="false" data-filter-type="listening" onclick="filterMistakesByType('listening')">听力</button>
+                        </div>
+                        <div class="filter-actions">
+                            <select class="mistake-sort-select" id="mistake-sort-select" onchange="sortMistakes(this.value)">
+                                <option value="date-desc">最新优先</option>
+                                <option value="date-asc">最早优先</option>
+                            </select>
+                            <button class="btn btn-secondary btn-sm" onclick="exportMistakeBook()">导出</button>
+                            <button class="btn btn-danger btn-sm" onclick="clearMistakeBook()">清空错题本</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mistakes-stats hero-grid hero-grid--stats">
-                    <div class="hero-card hero-card--stat">
-                        <div class="hero-card__label">总错题</div>
-                        <div class="hero-card__value" id="mistake-total">0</div>
-                    </div>
-                    <div class="hero-card hero-card--stat">
-                        <div class="hero-card__label">已掌握</div>
-                        <div class="hero-card__value" id="mistake-mastered">0</div>
-                    </div>
-                    <div class="hero-card hero-card--stat">
-                        <div class="hero-card__label">待复习</div>
-                        <div class="hero-card__value" id="mistake-unmastered">0</div>
-                    </div>
-                </div>
-
-                <div class="mistake-filter-bar">
-                    <div
-                        id="mistakes-type-filter"
-                        class="shui-filter-group shui-segmented-control"
-                    >
-                        <button
-                            class="shui-segmented-btn active"
-                            type="button"
-                            aria-pressed="true"
-                            data-filter-type="all"
-                            onclick="filterMistakesByType('all')"
-                        >
-                            全部
-                        </button>
-                        <button
-                            class="shui-segmented-btn"
-                            type="button"
-                            aria-pressed="false"
-                            data-filter-type="reading"
-                            onclick="filterMistakesByType('reading')"
-                        >
-                            阅读
-                        </button>
-                        <button
-                            class="shui-segmented-btn"
-                            type="button"
-                            aria-pressed="false"
-                            data-filter-type="listening"
-                            onclick="filterMistakesByType('listening')"
-                        >
-                            听力
-                        </button>
-                    </div>
-                    <div class="mistake-filter-right">
-                        <select class="mistake-sort-select" id="mistake-sort-select" onchange="sortMistakes(this.value)">
-                            <option value="date-desc">最新优先</option>
-                            <option value="date-asc">最早优先</option>
-                        </select>
-                        <button class="btn btn-secondary hero-btn hero-btn--ghost" onclick="exportMistakeBook()">导出</button>
-                    </div>
-                    <div class="search-input-wrap">
-                        <input
-                            type="text"
-                            class="search-input"
-                            id="mistake-search-input"
-                            placeholder="搜索题目..."
-                            aria-label="搜索错题"
-                            onkeyup="searchMistakes(this.value)"
-                        />
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">总错题</div>
+                            <div class="stat-value" id="mistake-total">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">已掌握</div>
+                            <div class="stat-value" id="mistake-mastered">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">待复习</div>
+                            <div class="stat-value" id="mistake-unmastered">0</div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="mistake-list" class="mistake-list"></div>
+                <div id="mistake-list" class="mistake-list stagger-container"></div>
             </div>
 
         </div>
@@ -329,6 +218,19 @@
 
         <!-- 应用核心 (source) -->
         <script type="module" src="js/app/app.js"></script>
+
+        <!-- UI 增强: 涟漪效果、Toast、图表 -->
+        <script src="js/animations/ripple.js"></script>
+        <script src="js/animations/toast.js"></script>
+        <script src="js/charts/accuracy.js"></script>
+        <script src="js/charts/practice.js"></script>
+        <script src="js/charts/trend.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.Ripple) Ripple.init();
+                if (window.Toast) Toast.init();
+            });
+        </script>
 
     </body>
 </html>
