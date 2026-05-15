@@ -37,27 +37,33 @@ const MistakeBook = (function () {
             }
 
             var newMistakes = [];
-            var answers = record.answers || [];
             var recordId = record.recordId || record.id || '';
+            var comparison = record.answerComparison || {};
+            var userAnswers = record.answers || {};
 
-            for (var j = 0; j < answers.length; j++) {
-                var ans = answers[j];
-                if (ans.correct) continue;
+            var questionIds = Object.keys(comparison);
+            for (var j = 0; j < questionIds.length; j++) {
+                var qId = questionIds[j];
+                var entry = comparison[qId];
+                if (!entry || entry.isCorrect) continue;
 
-                var dedupKey = record.examId + '|' + recordId + '|' + ans.questionId;
+                var dedupKey = record.examId + '|' + recordId + '|' + qId;
                 if (existingKeys[dedupKey]) continue;
+
+                var userAns = entry.userAnswer || userAnswers[qId] || '';
+                var correctAns = entry.correctAnswer || '';
 
                 var mistake = {
                     id: generateId(),
-                    recordId: record.recordId || record.id || '',
+                    recordId: recordId,
                     examId: record.examId || '',
-                    questionId: ans.questionId || '',
-                    userAnswer: ans.answer || '',
-                    correctAnswer: ans.correctAnswer || '',
-                    type: record.type || '',
-                    title: record.title || '',
-                    category: record.category || '',
-                    frequency: record.frequency || '',
+                    questionId: qId,
+                    userAnswer: Array.isArray(userAns) ? userAns.join(', ') : String(userAns),
+                    correctAnswer: Array.isArray(correctAns) ? correctAns.join(', ') : String(correctAns),
+                    type: record.type || (record.metadata && record.metadata.type) || '',
+                    title: record.title || (record.metadata && record.metadata.title) || '',
+                    category: record.category || (record.metadata && record.metadata.category) || '',
+                    frequency: record.frequency || (record.metadata && record.metadata.frequency) || '',
                     date: record.date || record.endTime || new Date().toISOString(),
                     mastered: false,
                     createdAt: new Date().toISOString(),
@@ -65,7 +71,7 @@ const MistakeBook = (function () {
                 };
 
                 newMistakes.push(mistake);
-                existingKeys[key] = true;
+                existingKeys[dedupKey] = true;
             }
 
             if (newMistakes.length > 0) {

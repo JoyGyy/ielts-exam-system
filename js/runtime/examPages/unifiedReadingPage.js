@@ -1676,8 +1676,13 @@
         setReadOnlyMode(true);
         disableDragInteractions();
         setTimerRunning(false);
-        if (dom.submitBtn) dom.submitBtn.disabled = true;
-        if (dom.resetBtn) dom.resetBtn.disabled = true;
+        if (dom.submitBtn) {
+            dom.submitBtn.disabled = false;
+            dom.submitBtn.textContent = '回顾模式';
+        }
+        if (dom.resetBtn) {
+            dom.resetBtn.disabled = false;
+        }
         setExitButtonVisible(true);
         if (reason === 'simulation-final-submit' || reason === 'replay-review') {
             stopSimulationDraftSync();
@@ -2354,6 +2359,10 @@
         });
     }
     async function handleSubmit() {
+        if (state.submitted) {
+            toggleReviewMode();
+            return;
+        }
         if (state.readOnly) {
             return;
         }
@@ -2410,8 +2419,64 @@
         enterSubmittedReadOnlyState(state.simulationMode ? 'simulation-final-submit' : 'final-submit');
     }
 
+    let reviewModeActive = false;
+
+    function toggleReviewMode() {
+        reviewModeActive = !reviewModeActive;
+        if (reviewModeActive) {
+            document.body.classList.remove('review-readonly-mode');
+            const controls = document.querySelectorAll('input, textarea, select');
+            controls.forEach((control) => {
+                if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement) {
+                    control.disabled = false;
+                }
+            });
+            if (dom.submitBtn) dom.submitBtn.textContent = '退出回顾';
+        } else {
+            document.body.classList.add('review-readonly-mode');
+            const controls = document.querySelectorAll('input, textarea, select');
+            controls.forEach((control) => {
+                if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement) {
+                    control.disabled = true;
+                }
+            });
+            if (dom.submitBtn) dom.submitBtn.textContent = '回顾模式';
+        }
+    }
+
     function handleReset() {
         if (state.readOnly || state.submitted) {
+            if (state.submitted) {
+                reviewModeActive = false;
+                state.submitted = false;
+                state.readOnly = false;
+                document.body.classList.remove('review-readonly-mode');
+                document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach((input) => {
+                    input.checked = false;
+                });
+                document.querySelectorAll('input[type="text"], textarea').forEach((input) => {
+                    input.value = '';
+                });
+                document.querySelectorAll('select').forEach((select) => {
+                    select.selectedIndex = 0;
+                });
+                getDropzones().forEach((dropzone) => {
+                    clearDropzone(dropzone);
+                });
+                if (dom.results) {
+                    dom.results.style.display = 'none';
+                    dom.results.innerHTML = '';
+                }
+                clearExplanations();
+                disableDragInteractions();
+                if (dom.submitBtn) {
+                    dom.submitBtn.textContent = dom.submitBtn.dataset.defaultLabel || 'Submit';
+                    dom.submitBtn.disabled = false;
+                }
+                if (dom.resetBtn) dom.resetBtn.disabled = false;
+                setExitButtonVisible(false);
+                updateNavStatuses();
+            }
             return;
         }
         if (state.simulationMode && state.simulationCtx) {
