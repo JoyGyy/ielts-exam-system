@@ -93,6 +93,21 @@ const MistakeBook = (function () {
             };
         },
 
+        recordRedo: function (id, isCorrect) {
+            var list = readAll();
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].id === id) {
+                    list[i].redoCount = (list[i].redoCount || 0) + 1;
+                    list[i].lastRedoResult = isCorrect ? 'correct' : 'incorrect';
+                    list[i].lastRedoDate = new Date().toISOString();
+                    list[i].updatedAt = new Date().toISOString();
+                    writeAll(list);
+                    return list[i];
+                }
+            }
+            return null;
+        },
+
         batchToggleMastered: function (ids, mastered) {
             if (!Array.isArray(ids) || ids.length === 0) return 0;
             var list = readAll();
@@ -220,11 +235,13 @@ const MistakeBook = (function () {
             var mastered = 0;
             var reading = 0;
             var listening = 0;
+            var redone = 0;
 
             for (var i = 0; i < total; i++) {
                 if (list[i].mastered) mastered++;
                 if (list[i].type === 'reading') reading++;
                 if (list[i].type === 'listening') listening++;
+                if (list[i].redoCount) redone++;
             }
 
             return {
@@ -232,7 +249,8 @@ const MistakeBook = (function () {
                 mastered: mastered,
                 unmastered: total - mastered,
                 reading: reading,
-                listening: listening
+                listening: listening,
+                redone: redone
             };
         }
     };
