@@ -503,6 +503,7 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
     document.body.appendChild(overlay);
 
     function closeModal() {
+        document.removeEventListener('keydown', onEsc);
         if (overlay && overlay.parentNode) {
             overlay.parentNode.removeChild(overlay);
         }
@@ -512,7 +513,6 @@ window.openRedoModal = function (mistakeId, examId, questionId, type) {
     function onEsc(e) {
         if (e.key === 'Escape') {
             closeModal();
-            document.removeEventListener('keydown', onEsc);
         }
     }
     document.addEventListener('keydown', onEsc);
