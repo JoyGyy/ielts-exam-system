@@ -170,6 +170,21 @@
 
     const transcriptCache = [];
 
+// 1. 添加 escapeHtml
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+
+
+
+
     function renderTranscript(lines) {
         if (!dom.transcriptContent || !Array.isArray(lines)) return;
         transcriptCache.length = 0;
@@ -674,7 +689,7 @@
         renderResults(results);
         highlightAnswersInTranscript();
 
-        if (typeof SpellingErrorCollector !== 'undefined') {
+        if (typeof SpellingErrorCollector !== 'undefined'&& typeof SpellingErrorCollector === 'function') {
             const collector = new SpellingErrorCollector();
             const answerKey = state.dataset?.answerKey || {};
             if (answerKey.text) {
@@ -874,11 +889,13 @@
         global.addEventListener('message', handleIncoming);
     }
 
+
     /* ========== Init ========== */
-    global.addEventListener('DOMContentLoaded', () => {
+    global.addEventListener('DOMContentLoaded',async () => {
         // Try bootstrap immediately if query params are present
         const params = new URLSearchParams(global.location.search);
         if (params.get('examId')) {
+            await ensureManifest();
             bootstrap();
         } else {
             // Wait for INIT_SESSION message
