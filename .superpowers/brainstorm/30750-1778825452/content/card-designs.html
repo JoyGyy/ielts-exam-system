@@ -1,0 +1,55 @@
+<h2>考试卡片设计风格对比</h2>
+<p class="subtitle">选择你喜欢的卡片视觉风格</p>
+
+<div class="cards">
+  <div class="card" data-choice="floating" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; min-height: 200px;">
+      <div style="background: #2d2d44; border-radius: 16px; padding: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(-4px);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="background: #6366f1; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px;">P1</span>
+          <span style="color: #94a3b8; font-size: 12px;">高频</span>
+        </div>
+        <h3 style="color: white; margin: 0 0 8px 0; font-size: 14px;">A Brief History of Tea</h3>
+        <p style="color: #94a3b8; margin: 0; font-size: 12px;">茶叶简史</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 浮动卡片</h3>
+      <p>深色背景上的悬浮卡片，带明显阴影和圆角，有层次感</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="flat" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 20px; min-height: 200px;">
+      <div style="border: 1px solid #334155; border-radius: 12px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="border: 1px solid #6366f1; color: #6366f1; padding: 4px 12px; border-radius: 20px; font-size: 12px;">P1</span>
+          <span style="color: #64748b; font-size: 12px;">高频</span>
+        </div>
+        <h3 style="color: #e2e8f0; margin: 0 0 8px 0; font-size: 14px;">A Brief History of Tea</h3>
+        <p style="color: #64748b; margin: 0; font-size: 12px;">茶叶简史</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 扁平卡片</h3>
+      <p>极简设计，用边框分隔内容，干净利落</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="glass" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%); padding: 20px; min-height: 200px;">
+      <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="background: rgba(99,102,241,0.5); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px;">P1</span>
+          <span style="color: rgba(255,255,255,0.7); font-size: 12px;">高频</span>
+        </div>
+        <h3 style="color: white; margin: 0 0 8px 0; font-size: 14px;">A Brief History of Tea</h3>
+        <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 12px;">茶叶简史</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 毛玻璃卡片</h3>
+      <p>半透明背景 + 模糊效果，现代感强</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<h2>错题本卡片设计对比</h2>
+<p class="subtitle">选择你喜欢的错题卡片风格</p>
+
+<div class="cards">
+  <div class="card" data-choice="compact" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 16px; min-height: 240px;">
+      <!-- Compact style -->
+      <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="color: #94a3b8; font-size: 11px;">P1 · 高频 · 04/15</span>
+          <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px;">未掌握</span>
+        </div>
+        <p style="color: #e2e8f0; margin: 0; font-size: 13px;">What is the main purpose of the passage?</p>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <span style="color: #64748b; font-size: 11px;">我的答案: A</span>
+          <span style="color: #22c55e; font-size: 11px;">正确答案: C</span>
+        </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="color: #94a3b8; font-size: 11px;">P2 · 中频 · 04/14</span>
+          <span style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px;">已掌握</span>
+        </div>
+        <p style="color: #e2e8f0; margin: 0; font-size: 13px;">According to the author, what is...</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 紧凑列表</h3>
+      <p>信息密度高，一屏显示更多错题</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="detailed" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 16px; min-height: 240px;">
+      <!-- Detailed style -->
+      <div style="background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 16px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <span style="background: rgba(99,102,241,0.2); color: #a5b4fc; padding: 4px 10px; border-radius: 8px; font-size: 11px;">P1</span>
+            <span style="background: rgba(239,68,68,0.2); color: #fca5a5; padding: 4px 10px; border-radius: 8px; font-size: 11px; margin-left: 4px;">未掌握</span>
+          </div>
+          <span style="color: #64748b; font-size: 11px;">04/15 14:30</span>
+        </div>
+        <p style="color: #e2e8f0; margin: 0 0 12px 0; font-size: 14px; line-height: 1.5;">What is the main purpose of the passage about tea history?</p>
+        <div style="display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <div style="text-align: center;">
+            <span style="color: #64748b; font-size: 10px; display: block;">我的答案</span>
+            <span style="color: #ef4444; font-size: 16px; font-weight: bold;">A</span>
+          </div>
+          <div style="text-align: center;">
+            <span style="color: #64748b; font-size: 10px; display: block;">正确答案</span>
+            <span style="color: #22c55e; font-size: 16px; font-weight: bold;">C</span>
+          </div>
+          <div style="text-align: center;">
+            <span style="color: #64748b; font-size: 10px; display: block;">重做次数</span>
+            <span style="color: #94a3b8; font-size: 16px; font-weight: bold;">2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 详细卡片</h3>
+      <p>信息丰富，有视觉层次，但占空间较大</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="timeline" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0f172a; padding: 16px; min-height: 240px;">
+      <!-- Timeline style -->
+      <div style="position: relative; padding-left: 20px;">
+        <div style="position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, #6366f1, #8b5cf6);"></div>
+        <div style="margin-bottom: 16px; position: relative;">
+          <div style="position: absolute; left: -18px; top: 6px; width: 10px; height: 10px; background: #ef4444; border-radius: 50%; border: 2px solid #0f172a;"></div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94a3b8; font-size: 11px;">04/15 14:30</span>
+              <span style="color: #ef4444; font-size: 11px;">2次错误</span>
+            </div>
+            <p style="color: #e2e8f0; margin: 0; font-size: 12px;">What is the main purpose...</p>
+          </div>
+        </div>
+        <div style="position: relative;">
+          <div style="position: absolute; left: -18px; top: 6px; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; border: 2px solid #0f172a;"></div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="color: #94a3b8; font-size: 11px;">04/14 10:15</span>
+              <span style="color: #22c55e; font-size: 11px;">已掌握</span>
+            </div>
+            <p style="color: #e2e8f0; margin: 0; font-size: 12px;">According to the author...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 时间线视图</h3>
+      <p>按时间排列，直观显示学习进度</p>
+    </div>
+  </div>
+</div>

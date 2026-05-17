@@ -217,6 +217,7 @@
 
         if (dom.playPauseBtn) {
             dom.playPauseBtn.addEventListener('click', () => {
+                console.log("启动了")
                 if (dom.audio.paused) {
                     console.log('[Listening] Play clicked, src:', dom.audio.src, 'readyState:', dom.audio.readyState, 'networkState:', dom.audio.networkState);
                     dom.audio.play().catch(err => {
