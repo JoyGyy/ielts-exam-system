@@ -76,11 +76,13 @@
     }
 
     function formatTime(seconds) {
+        if (!isFinite(seconds) || isNaN(seconds) || seconds < 0) {
+            return '00:00';
+        }
         const m = Math.floor(seconds / 60);
         const s = Math.floor(seconds % 60);
         return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
     }
-
     /* ========== Data Loading ========== */
     function loadScript(url) {
         return new Promise((resolve, reject) => {
@@ -170,16 +172,16 @@
 
     const transcriptCache = [];
 
-// 1. 添加 escapeHtml
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
-}
+    // 1. 添加 escapeHtml
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function (m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
 
 
@@ -211,32 +213,61 @@ function escapeHtml(str) {
             }
         });
     }
-
-    /* ========== Audio Player ========== */
     function attachAudioEvents() {
         if (!dom.audio) return;
 
-        dom.audio.addEventListener('timeupdate', () => {
-            if (!dom.audio.duration) return;
-            const pct = (dom.audio.currentTime / dom.audio.duration) * 100;
-            if (dom.progressBar) dom.progressBar.style.width = pct + '%';
-            if (dom.timeDisplay) {
-                dom.timeDisplay.textContent = formatTime(dom.audio.currentTime) + ' / ' + formatTime(dom.audio.duration);
+        // ✅ 正确：这些事件监听器应该在函数顶层注册，只注册一次
+
+        // 1. 元数据加载完成时
+        dom.audio.addEventListener('loadedmetadata', () => {
+            const duration = dom.audio.duration;
+            if (isFinite(duration) && duration > 0 && dom.timeDisplay) {
+                dom.timeDisplay.textContent = '00:00 / ' + formatTime(duration);
             }
+        });
+
+        // 2. 音频加载错误时
+        dom.audio.addEventListener('error', () => {
+            if (dom.timeDisplay) {
+                dom.timeDisplay.textContent = '音频加载失败';
+            }
+            if (dom.progressBar) {
+                dom.progressBar.style.width = '0%';
+            }
+        });
+
+        // 3. 时间更新时（这才是 timeupdate 的监听器）
+        dom.audio.addEventListener('timeupdate', () => {
+            const duration = dom.audio.duration;
+            const isValidDuration = isFinite(duration) && duration > 0;
+
+            if (isValidDuration) {
+                const pct = (dom.audio.currentTime / duration) * 100;
+                if (dom.progressBar) dom.progressBar.style.width = pct + '%';
+                if (dom.timeDisplay) {
+                    dom.timeDisplay.textContent = formatTime(dom.audio.currentTime) + ' / ' + formatTime(duration);
+                }
+            } else {
+                // 音频未就绪时显示占位符
+                if (dom.timeDisplay) {
+                    dom.timeDisplay.textContent = '00:00 / 00:00';
+                }
+            }
+
             highlightTranscriptLine(dom.audio.currentTime);
         });
 
+        // 4. 音频播放结束时
         dom.audio.addEventListener('ended', () => {
             if (dom.playPauseBtn) dom.playPauseBtn.innerHTML = '&#9658;';
         });
 
+        // 5. 播放/暂停按钮
         if (dom.playPauseBtn) {
             dom.playPauseBtn.addEventListener('click', () => {
-                console.log("启动了")
                 if (dom.audio.paused) {
-                    console.log('[Listening] Play clicked, src:', dom.audio.src, 'readyState:', dom.audio.readyState, 'networkState:', dom.audio.networkState);
                     dom.audio.play().catch(err => {
-                        console.error('[Listening] Play failed:', err.message, 'src:', dom.audio.src);
+                        console.error('[Listening] Play failed:', err.message);
                     });
                     dom.playPauseBtn.innerHTML = '&#10074;&#10074;';
                 } else {
@@ -246,6 +277,7 @@ function escapeHtml(str) {
             });
         }
 
+        // 6. 进度条点击
         if (dom.progressContainer) {
             dom.progressContainer.addEventListener('click', (e) => {
                 if (!dom.audio.duration) return;
@@ -255,6 +287,7 @@ function escapeHtml(str) {
             });
         }
 
+        // 7. 倍速选择
         if (dom.speedSelect) {
             dom.speedSelect.addEventListener('change', () => {
                 dom.audio.playbackRate = parseFloat(dom.speedSelect.value) || 1.0;
@@ -368,7 +401,7 @@ function escapeHtml(str) {
                 const checked = document.querySelectorAll(`input[type="checkbox"][name="${qKey}"]:checked`);
                 answers[qKey] = Array.from(checked).map(c => c.value).sort().join(',');
             } else if ((answerKey.matching && answerKey.matching[qKey] !== undefined) ||
-                       (answerKey.flowChart && answerKey.flowChart[qKey] !== undefined)) {
+                (answerKey.flowChart && answerKey.flowChart[qKey] !== undefined)) {
                 const select = document.querySelector(`select[name="${qKey}"]`);
                 if (select) {
                     answers[qKey] = select.value;
@@ -677,7 +710,7 @@ function escapeHtml(str) {
         }
 
         if (type === 'EXIT_SESSION' || type === 'SUITE_FORCE_CLOSE') {
-            try { global.close(); } catch (_) {}
+            try { global.close(); } catch (_) { }
         }
     }
 
@@ -689,7 +722,7 @@ function escapeHtml(str) {
         renderResults(results);
         highlightAnswersInTranscript();
 
-        if (typeof SpellingErrorCollector !== 'undefined'&& typeof SpellingErrorCollector === 'function') {
+        if (typeof SpellingErrorCollector !== 'undefined' && typeof SpellingErrorCollector === 'function') {
             const collector = new SpellingErrorCollector();
             const answerKey = state.dataset?.answerKey || {};
             if (answerKey.text) {
@@ -776,11 +809,11 @@ function escapeHtml(str) {
                 } else if (opener.AppActions && typeof opener.AppActions.stopEndlessPractice === 'function') {
                     opener.AppActions.stopEndlessPractice();
                 }
-            } catch (_) {}
+            } catch (_) { }
         }
         try {
             global.close();
-        } catch (_) {}
+        } catch (_) { }
     }
 
     function handleReset() {
@@ -891,7 +924,7 @@ function escapeHtml(str) {
 
 
     /* ========== Init ========== */
-    global.addEventListener('DOMContentLoaded',async () => {
+    global.addEventListener('DOMContentLoaded', async () => {
         // Try bootstrap immediately if query params are present
         const params = new URLSearchParams(global.location.search);
         if (params.get('examId')) {
